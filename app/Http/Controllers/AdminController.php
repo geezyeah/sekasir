@@ -260,6 +260,43 @@ class AdminController extends Controller
         return view('admin.shifts-summary', compact('shifts', 'totalOrders', 'totalRevenue', 'activeShifts'));
     }
 
+    public function forceEndShift(Shift $shift)
+    {
+        try {
+            // Check if shift is active
+            if ($shift->status !== 'active') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This shift is not active.'
+                ], 400);
+            }
+
+            // Update shift to ended
+            $shift->update([
+                'status' => 'inactive',
+                'logout_time' => now(),
+            ]);
+
+            // Log the action
+            \Log::info('Admin force ended shift', [
+                'shift_id' => $shift->id,
+                'employee_id' => $shift->user_id,
+                'admin_id' => auth()->id(),
+                'logout_time' => $shift->logout_time,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Shift ended successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error ending shift: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function shops()
     {
         $shops = Shop::all();

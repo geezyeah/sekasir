@@ -112,6 +112,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/product-types/{productType}', [AdminController::class, 'deleteProductType'])->name('product-types.delete');
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/shifts', [AdminController::class, 'shifts'])->name('shifts');
+    Route::post('/shifts/{shift}/end', [AdminController::class, 'forceEndShift'])->name('shifts.force-end');
     Route::get('/shifts-summary', [AdminController::class, 'shiftsSummary'])->name('shifts.summary');
     Route::get('/shops', [AdminController::class, 'shops'])->name('shops');
     Route::get('/shops/{shop}/edit', [AdminController::class, 'editShop'])->name('shops.edit');

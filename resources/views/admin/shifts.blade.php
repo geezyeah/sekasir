@@ -134,11 +134,15 @@
                         </button>
 
                         <!-- Status Badge -->
-                        <div class="text-center pt-3 border-t border-gray-200">
-                            <span class="inline-flex items-center gap-2 text-xs font-semibold text-green-600">
+                        <div class="flex gap-2 pt-3 border-t border-gray-200">
+                            <span class="flex-1 inline-flex items-center justify-center gap-2 text-xs font-semibold text-green-600">
                                 <i class="fas fa-check-circle"></i>
                                 ON DUTY
                             </span>
+                            <button @click="confirmEndShift({{ $shift->id }}, '{{ $shift->user->name }}')" class="flex-1 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-lg transition-colors inline-flex items-center justify-center gap-1">
+                                <i class="fas fa-stop-circle"></i>
+                                End
+                            </button>
                         </div>
                     </div>
                     @endforeach
@@ -219,6 +223,9 @@
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
                                     <i class="fas fa-heartbeat mr-2 text-indigo-600"></i>Status
                                 </th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                    <i class="fas fa-cogs mr-2 text-indigo-600"></i>Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -253,10 +260,19 @@
                                             {{ ucfirst($shift->status) }}
                                         </span>
                                     </td>
+                                    <td class="px-6 py-4">
+                                        @if($shift->status === 'active')
+                                            <button @click="confirmEndShift({{ $shift->id }}, '{{ $shift->user->name }}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1">
+                                                <i class="fas fa-stop-circle"></i>End Shift
+                                            </button>
+                                        @else
+                                            <span class="text-xs text-gray-400">-</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
                                         <i class="fas fa-clock text-3xl mb-2 block opacity-30"></i>
                                         <span class="text-sm">No shifts found</span>
                                     </td>
@@ -366,6 +382,38 @@
                 </div>
             </div>
         </div>
+
+        {{-- End Shift Confirmation Modal --}}
+        <div x-show="showConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" style="display: none;">
+            <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+                <!-- Icon -->
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
+                    </div>
+                </div>
+
+                <!-- Title & Message -->
+                <h3 class="text-xl font-bold text-center text-gray-900 mb-2">
+                    End Shift Confirmation
+                </h3>
+                <p class="text-center text-gray-600 mb-6">
+                    Are you sure you want to forcefully end the shift for <strong x-text="confirmingShiftName"></strong>? This action cannot be undone.
+                </p>
+
+                <!-- Buttons -->
+                <div class="flex gap-3">
+                    <button @click="showConfirmModal = false" :disabled="endingShift" class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Cancel
+                    </button>
+                    <button @click="endShift()" :disabled="endingShift" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2">
+                        <i class="fas fa-stop-circle"></i>
+                        <span x-show="!endingShift">End Shift</span>
+                        <span x-show="endingShift">Processing...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -377,6 +425,10 @@
                 selectedShopName: '',
                 orders: [],
                 loading: false,
+                showConfirmModal: false,
+                confirmingShiftId: null,
+                confirmingShiftName: null,
+                endingShift: false,
 
                 openOrdersModal(shiftId, employeeName, shopName) {
                     this.selectedShiftId = shiftId;
@@ -384,6 +436,41 @@
                     this.selectedShopName = shopName;
                     this.showModal = true;
                     this.loadOrders();
+                },
+
+                confirmEndShift(shiftId, employeeName) {
+                    this.confirmingShiftId = shiftId;
+                    this.confirmingShiftName = employeeName;
+                    this.showConfirmModal = true;
+                },
+
+                async endShift() {
+                    this.endingShift = true;
+                    try {
+                        const response = await fetch(`/admin/shifts/${this.confirmingShiftId}/end`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            this.showConfirmModal = false;
+                            // Reload page to show updated shifts
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            alert('Error ending shift: ' + (data.message || 'Unknown error'));
+                        }
+                    } catch (error) {
+                        console.error('Error ending shift:', error);
+                        alert('Error ending shift: ' + error.message);
+                    } finally {
+                        this.endingShift = false;
+                    }
                 },
 
                 async loadOrders() {
