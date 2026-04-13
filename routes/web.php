@@ -67,9 +67,9 @@ Route::middleware(['auth'])->group(function () {
                     'items' => $order->items->map(function ($item) {
                         return [
                             'id' => (int) $item->id,
-                            'product_name' => $item->product->name,
+                            'product_name' => $item->product?->name ?? '[Product Removed]',
                             'quantity' => (int) $item->quantity,
-                            'subtotal' => (int) ($item->quantity * $item->product->price),
+                            'subtotal' => (int) ($item->quantity * ($item->product?->price ?? $item->price)),
                         ];
                     })->toArray(),
                 ];

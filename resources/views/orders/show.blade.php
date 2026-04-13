@@ -66,7 +66,13 @@
                         <div class="p-4 bg-gradient-to-r from-gray-50 to-white rounded-lg border-l-4 border-indigo-600 hover:shadow-md transition-shadow">
                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                                 <div class="flex-1">
-                                    <h4 class="text-sm md:text-base font-bold text-gray-900">{{ $item->product->name }}</h4>
+                                    <h4 class="text-sm md:text-base font-bold text-gray-900">
+                                        @if($item->product)
+                                            {{ $item->product->name }}
+                                        @else
+                                            <span class="text-gray-500 italic">[Product Removed]</span>
+                                        @endif
+                                    </h4>
                                     <p class="text-xs text-gray-600 mt-1">
                                         <i class="fas fa-tag mr-1"></i>
                                         Rp {{ number_format($item->price, 0, ',', '.') }} {{ __('pos.each') }}

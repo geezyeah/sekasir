@@ -124,7 +124,7 @@
                         $productSummary = collect();
                         foreach ($shiftOrders as $order) {
                             foreach ($order->items as $item) {
-                                $key = $item->product->name;
+                                $key = $item->product?->name ?? '[Product Removed]';
                                 if ($productSummary->has($key)) {
                                     $productSummary[$key] = [
                                         'quantity' => $productSummary[$key]['quantity'] + $item->quantity,
