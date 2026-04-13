@@ -10,6 +10,7 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
@@ -62,7 +63,8 @@ class AdminController extends Controller
 
     public function employees()
     {
-        $employees = User::withCount('shifts')
+        $employees = User::with('authorizedShops')
+            ->withCount('shifts')
             ->orderBy('name')
             ->get();
 
@@ -109,9 +111,27 @@ class AdminController extends Controller
             'price' => 'required|numeric|min:0',
             'product_type_id' => 'nullable|exists:product_types,id',
             'is_seasonal' => 'boolean',
+            'idempotency_key' => 'nullable|string',
         ]);
 
-        Product::create($request->only(['shop_id', 'name', 'price', 'product_type_id', 'is_seasonal']));
+        // Check if we've already processed this idempotency key
+        $idempotencyKey = $request->input('idempotency_key');
+        if ($idempotencyKey) {
+            $cacheKey = "product_submission_{$idempotencyKey}";
+            
+            if (Cache::has($cacheKey)) {
+                // Already processed, redirect with success message
+                return redirect()->route('admin.products')->with('success', 'Product created successfully! (Duplicate request prevented)');
+            }
+        }
+
+        $product = Product::create($request->only(['shop_id', 'name', 'price', 'product_type_id', 'is_seasonal']));
+
+        // Cache the submission result for 24 hours
+        if ($idempotencyKey) {
+            $cacheKey = "product_submission_{$idempotencyKey}";
+            Cache::put($cacheKey, ['id' => $product->id], now()->addHours(24));
+        }
 
         return redirect()->route('admin.products')->with('success', 'Product created successfully.');
     }
@@ -216,6 +236,28 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('admin.shifts', compact('shifts'));
+    }
+
+    public function shiftsSummary()
+    {
+        // Get all shifts for statistics calculation
+        $allShifts = Shift::with(['user', 'shop', 'orders'])
+            ->withCount('orders')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Calculate statistics
+        $totalOrders = $allShifts->flatMap->orders->count();
+        $totalRevenue = $allShifts->flatMap->orders->sum('total_amount');
+        $activeShifts = $allShifts->where('status', 'active')->count();
+
+        // Paginate for display
+        $shifts = Shift::with(['user', 'shop', 'orders'])
+            ->withCount('orders')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('admin.shifts-summary', compact('shifts', 'totalOrders', 'totalRevenue', 'activeShifts'));
     }
 
     public function shops()

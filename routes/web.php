@@ -7,6 +7,26 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftController;
 use Illuminate\Support\Facades\Route;
 
+// Language Switching
+Route::middleware(['auth'])->get('/language/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        session(['locale' => $locale]);
+        app()->setLocale($locale);
+        \Log::info('Language switched', ['locale' => $locale, 'session_locale' => session('locale')]);
+    }
+    return redirect()->back()->with('success', 'Language changed to ' . $locale);
+})->name('language.switch');
+
+// Debug: Test session
+Route::middleware(['auth'])->get('/test-session', function () {
+    $locale = session('locale');
+    return response()->json([
+        'session_locale' => $locale,
+        'app_locale' => app()->getLocale(),
+        'session_all' => session()->all(),
+    ]);
+});
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -31,6 +51,32 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/history', [OrderController::class, 'history'])->name('orders.history');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // API: Shift Orders
+    Route::get('/api/shifts/{shift}/orders', function (\App\Models\Shift $shift) {
+        $orders = $shift->user->orders()
+            ->where('shift_id', $shift->id)
+            ->with(['items.product', 'shop'])
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => (int) $order->id,
+                    'total_amount' => (int) $order->total_amount,
+                    'payment_type' => $order->payment_type,
+                    'created_at' => $order->created_at->format('d M Y H:i'),
+                    'items' => $order->items->map(function ($item) {
+                        return [
+                            'id' => (int) $item->id,
+                            'product_name' => $item->product->name,
+                            'quantity' => (int) $item->quantity,
+                            'subtotal' => (int) ($item->quantity * $item->product->price),
+                        ];
+                    })->toArray(),
+                ];
+            });
+
+        return response()->json(['orders' => $orders]);
+    });
 
     // Dashboard redirect based on role
     Route::get('/dashboard', function () {
@@ -66,6 +112,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/product-types/{productType}', [AdminController::class, 'deleteProductType'])->name('product-types.delete');
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders');
     Route::get('/shifts', [AdminController::class, 'shifts'])->name('shifts');
+    Route::get('/shifts-summary', [AdminController::class, 'shiftsSummary'])->name('shifts.summary');
     Route::get('/shops', [AdminController::class, 'shops'])->name('shops');
     Route::get('/shops/{shop}/edit', [AdminController::class, 'editShop'])->name('shops.edit');
     Route::patch('/shops/{shop}', [AdminController::class, 'updateShop'])->name('shops.update');

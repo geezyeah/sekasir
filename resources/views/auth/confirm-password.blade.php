@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-600 rounded">
         <p class="text-sm text-yellow-800">
-            {{ __('This is a secure area. Please confirm your password to continue.') }}
+            {{ __('auth.confirm_required') }}
         </p>
     </div>
 
@@ -10,7 +10,7 @@
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="password" :value="__('auth.password')" class="text-sm font-semibold text-gray-700" />
 
             <x-text-input 
                 id="password" 
@@ -27,7 +27,7 @@
 
         <div class="flex items-center justify-center pt-2">
             <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                {{ __('Confirm Password') }}
+                {{ __('common.save') }}
             </button>
         </div>
     </form>

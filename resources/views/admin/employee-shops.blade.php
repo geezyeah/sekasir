@@ -12,7 +12,7 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">Manage Shop Authorization</h2>
+        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">{{ __('admin.manage_shop_authorization') }}</h2>
     </x-slot>
 
     <!-- Breadcrumb Navigation -->
@@ -39,7 +39,7 @@
 
                         <!-- Shop Selection -->
                         <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-900 mb-3">Authorized Shops</label>
+                            <label class="block text-sm font-semibold text-gray-900 mb-3">{{ __('admin.authorized_shops') }}</label>
                             <p class="text-xs sm:text-sm text-gray-600 mb-4">Select which shops this employee can work at:</p>
 
                             <div class="space-y-3">

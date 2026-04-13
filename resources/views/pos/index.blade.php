@@ -7,11 +7,11 @@
                     <h2 class="text-2xl font-bold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ $shop->name }}</h2>
                     <div class="flex items-center gap-1 mt-1">
                         <span class="inline-block w-2 h-2 rounded-full" style="background-color: #219d38;"></span>
-                        <span class="text-xs font-semibold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Active</span>
+                        <span class="text-xs font-semibold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.active') }}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('pos.shift-report') }}" class="text-white hover:opacity-75 transition-colors" title="View shift report">
+                    <a href="{{ route('pos.shift-report') }}" class="text-white hover:opacity-75 transition-colors" title="{{ __('pos.view_shift_report') }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
@@ -27,7 +27,7 @@
                         <x-slot name="content">
                             <form method="POST" action="{{ route('shifts.end') }}" class="w-full">
                                 @csrf
-                                <x-dropdown-link :href="route('shifts.end')" onclick="event.preventDefault(); this.closest('form').submit();" class="text-xs">End Shift</x-dropdown-link>
+                                <x-dropdown-link :href="route('shifts.end')" onclick="event.preventDefault(); this.closest('form').submit();" class="text-xs">{{ __('pos.end_shift') }}</x-dropdown-link>
                             </form>
                         </x-slot>
                     </x-dropdown>
@@ -37,15 +37,15 @@
             <!-- Mobile Info Cards - Single Row -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white bg-opacity-10 rounded-lg p-2 backdrop-blur">
-                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Started</p>
+                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.started') }}</p>
                     <p class="text-xs font-bold mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ $shift->login_time->format('H:i') }}</p>
                 </div>
                 <div class="bg-white bg-opacity-10 rounded-lg p-2 backdrop-blur">
-                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Duration</p>
+                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.shift_duration') }}</p>
                     <p class="text-xs font-bold mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" id="shift-duration-mobile">--:--:--</p>
                 </div>
                 <div class="bg-white bg-opacity-10 rounded-lg p-2 backdrop-blur">
-                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Now</p>
+                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.now') }}</p>
                     <p class="text-xs font-bold mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" id="shift-current-time-mobile">--:--</p>
                 </div>
             </div>
@@ -58,21 +58,21 @@
                 <h2 class="text-3xl font-bold mb-2" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ $shop->name }}</h2>
                 <div class="flex items-center gap-2">
                     <span class="inline-block w-2.5 h-2.5 rounded-full" style="background-color: #219d38;"></span>
-                    <span class="text-sm font-semibold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Active Shift</span>
+                    <span class="text-sm font-semibold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.active_shift') }}</span>
                 </div>
             </div>
             
             <!-- Center: Shift Details Cards -->
             <div class="flex-1 grid grid-cols-2 gap-4">
                 <div class="bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur">
-                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Shift Started</p>
+                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.shift_started') }}</p>
                     <p class="text-lg font-bold mt-2" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ $shift->login_time->format('d M Y') }}</p>
                     <p class="text-sm opacity-75 mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ $shift->login_time->format('H:i') }}</p>
                 </div>
                 <div class="bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur">
-                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Shift Duration</p>
+                    <p class="text-xs opacity-75" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.shift_duration') }}</p>
                     <p class="text-lg font-bold mt-2" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" id="shift-duration-header">--:--:--</p>
-                    <p class="text-sm opacity-75 mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Current Time: <span id="shift-current-time">--:--</span></p>
+                    <p class="text-sm opacity-75 mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.current_time') }}: <span id="shift-current-time">--:--</span></p>
                 </div>
             </div>
             
@@ -84,7 +84,7 @@
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: {{ $shop->getProperty('bg_color', '#8d140c') }};">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                             </svg>
-                            <span class="text-gray-500 text-xs font-semibold">Employee:</span>
+                            <span class="text-gray-500 text-xs font-semibold">{{ __('pos.employee') }}:</span>
                             <span class="font-bold text-gray-900" style="padding-left:5px;">{{ Auth::user()->name }}</span>
                         </div>
                         <div class="w-px h-4 bg-gray-200"></div>
@@ -92,13 +92,13 @@
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: {{ $shop->getProperty('bg_color', '#8d140c') }};">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
                             </svg>
-                            <span class="text-gray-500 text-xs font-semibold">Shift Time:</span>
+                            <span class="text-gray-500 text-xs font-semibold">{{ __('pos.shift_time') }}:</span>
                             <span class="font-bold text-gray-900" id="shift-timer" style="padding-left:5px;">{{ $shift->login_time->format('H:i') }}</span>
                         </div>
                     </div>
                 </div>
 
-                <a href="{{ route('pos.shift-report') }}" class="text-white hover:opacity-75 transition-colors" title="View shift report">
+                <a href="{{ route('pos.shift-report') }}" class="text-white hover:opacity-75 transition-colors" title="{{ __('pos.view_shift_report') }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
@@ -134,17 +134,17 @@
                 <div class="md:col-span-1 order-1 md:order-2 md:sticky md:top-20 hidden md:block">
                     <div class="rounded-xl md:rounded-2xl shadow-lg p-3 md:p-6 lg:sticky lg:top-6" style="background-color: white;">
                         <div class="flex justify-between items-center mb-3 md:mb-5">
-                            <h3 class="text-base md:text-lg font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Cart</h3>
+                            <h3 class="text-base md:text-lg font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.cart') }}</h3>
                             <button @click="clearCart()" x-show="Object.keys(cart).length > 0"
                                     class="text-xs md:text-sm font-semibold transition-colors hover:opacity-70" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
-                                Clear
+                                {{ __('pos.clear_cart') }}
                             </button>
                         </div>
 
                         <template x-if="Object.keys(cart).length === 0">
                             <div class="text-center py-4 md:py-8">
                                 <div class="text-2xl md:text-4xl mb-1 md:mb-2"><i class="fas fa-shopping-cart" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};" opacity="0.6;"></i></div>
-                                <p class="text-xs md:text-sm" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.6;">Cart is empty</p>
+                                <p class="text-xs md:text-sm" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.6;">{{ __('pos.cart_empty') }}</p>
                             </div>
                         </template>
 
@@ -153,7 +153,7 @@
                                 <div class="flex items-center justify-between p-2 md:p-3 rounded-lg transition-all duration-200" style="background-color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs md:text-sm font-semibold truncate" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};" x-text="item.product_name"></p>
-                                        <p class="text-xs" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.6;" x-text="formatRupiah(item.price) + ' each'"></p>
+                                        <p class="text-xs" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.6;" x-text="formatRupiah(item.price) + ' {{ __('pos.each') }}'"></p>
                                     </div>
                                     <div class="flex items-center gap-1 ml-2">
                                         <button @click="updateQty(cartId, item.quantity - 1)"
@@ -179,14 +179,14 @@
 
                         <div x-show="Object.keys(cart).length > 0" class="mt-3 md:mt-5 pt-3 md:pt-5" style="border-top: 2px solid {{ $shop->getProperty('text_color', '#F5E6D3') }};">
                             <div class="flex justify-between items-center mb-2 md:mb-4">
-                                <span class="text-sm md:text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Total</span>
+                                <span class="text-sm md:text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.total') }}</span>
                                 <span class="text-base md:text-xl font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};" x-text="formatRupiah(cartTotal)"></span>
                             </div>
 
                             <button @click="showPayment = true"
                                     class="w-full font-bold py-2 md:py-3 px-4 rounded-lg transition-all duration-200 text-xs md:text-base shadow-lg hover:shadow-xl transform hover:scale-105" 
                                     style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
-                                Submit Order
+                                {{ __('pos.submit_order') }}
                             </button>
                         </div>
                     </div>
@@ -215,11 +215,10 @@
                     <div x-show="!cartCollapsed" x-transition class="max-h-[calc(100vh-180px)] overflow-y-auto bg-white">
                         <div class="p-4">
                             <div class="flex justify-between items-center mb-3">
-                                <h3 class="text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Cart Details</h3>
-                                <button @click="clearCart()" x-show="Object.keys(cart).length > 0"
-                                        class="text-xs font-semibold transition-colors hover:opacity-70" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
-                                    Clear
-                                </button>
+                            <h3 class="text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.cart_details') }}</h3>
+                            <button @click="clearCart()" x-show="Object.keys(cart).length > 0"
+                                    class="text-xs font-semibold transition-colors hover:opacity-70" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
+                                {{ __('pos.clear_cart') }}
                             </div>
 
                             <template x-if="Object.keys(cart).length === 0">
@@ -259,14 +258,14 @@
 
                             <div x-show="Object.keys(cart).length > 0" class="pt-3 border-t-2" style="border-color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
                                 <div class="flex justify-between items-center mb-3">
-                                    <span class="text-sm font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Total</span>
+                                    <span class="text-sm font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.total') }}</span>
                                     <span class="text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};" x-text="formatRupiah(cartTotal)"></span>
                                 </div>
 
                                 <button @click="showPayment = true"
                                         class="w-full font-bold py-2.5 px-4 rounded-lg transition-all duration-200 text-sm shadow-lg hover:shadow-xl" 
                                         style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
-                                    Submit Order
+                                    {{ __('pos.submit_order') }}
                                 </button>
                             </div>
                         </div>
@@ -281,9 +280,20 @@
                             @foreach($products as $product)
                                 <button
                                     @click="addToCart({{ $product->id }})"
-                                    class="flex flex-col items-center p-1.5 md:p-3 rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg border-2 group"
-                                    style="background-color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; border-color: rgba(255,255,255,0.3); hover:background-color: white;"
+                                    :disabled="addingProducts.has({{ $product->id }})"
+                                    class="flex flex-col items-center p-1.5 md:p-3 rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg border-2 group disabled:opacity-60 disabled:cursor-not-allowed relative"
+                                    style="background-color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; border-color: rgba(255,255,255,0.3);"
+                                    :style="`background-color: ${addingProducts.has({{ $product->id }}) ? '#e0e0e0' : '{{ $shop->getProperty('text_color', '#F5E6D3') }}'}`"
                                 >
+                                    <!-- Quantity Badge -->
+                                    <div x-show="getProductQuantity({{ $product->id }}) > 0" 
+                                         class="absolute top-0 right-0 transform translate-x-1.5 -translate-y-1.5"
+                                         :style="`background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; color: {{ $shop->getProperty('text_color', '#F5E6D3') }};`">
+                                        <div class="flex items-center justify-center rounded-full w-5 h-5 md:w-6 md:h-6 text-xs md:text-sm font-bold shadow-lg border-2" style="border-color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                            <span x-text="getProductQuantity({{ $product->id }})"></span>
+                                        </div>
+                                    </div>
+
                                     <div class="text-xl md:text-3xl mb-0.5 flex items-center justify-center">
                                         @if($shop->name === 'Ice Lepen')
                                             @if($product->productType && str_contains(strtolower($product->productType->name), 'cone'))
@@ -307,10 +317,10 @@
 
                     {{-- Order History for this shift --}}
                     <div class="rounded-xl md:rounded-2xl shadow-lg p-3 md:p-6 mt-2 md:mt-6" style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
-                        <h3 class="text-sm md:text-lg font-bold mb-2 md:mb-4" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Shift Orders</h3>
+                        <h3 class="text-sm md:text-lg font-bold mb-2 md:mb-4" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">{{ __('pos.items') }}</h3>
                         <div id="order-history">
                             <template x-if="orders.length === 0">
-                                <p class="text-xs md:text-sm" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.7;">No orders yet.</p>
+                                <p class="text-xs md:text-sm" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.7;">{{ __('pos.no_orders_yet') }}</p>
                             </template>
                             <div class="space-y-1.5 md:space-y-2 max-h-40 md:max-h-96 overflow-y-auto">
                                 <template x-for="order in orders" :key="order.id">
@@ -341,12 +351,12 @@
              @keydown.escape.window="showPayment = false">
             <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md max-h-[90vh] overflow-y-auto p-5" @click.outside="showPayment = false">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-lg font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Payment</h3>
+                    <h3 class="text-lg font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.payment') }}</h3>
                     <button @click="showPayment = false" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
                 </div>
 
                 <div class="text-center mb-4 p-2.5 rounded-xl" style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
-                    <p class="text-xs" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.8;">Total Amount</p>
+                    <p class="text-xs" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.8;">{{ __('pos.total') }}</p>
                     <p class="text-2xl font-bold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" x-text="formatRupiah(cartTotal)"></p>
                 </div>
 
@@ -359,7 +369,7 @@
                         <div class="text-lg mb-0.5">
                             <i class="fas fa-qrcode" :style="paymentType === 'QRIS' ? 'color: white;' : 'color: #3b82f6;'"></i>
                         </div>
-                        <span class="text-xs">QRIS</span>
+                        <span class="text-xs">{{ __('pos.qris') }}</span>
                     </button>
                     <button @click="paymentType = 'CASH'"
                             :class="paymentType === 'CASH' ? 'text-white border-2' : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-gray-300'"
@@ -368,13 +378,13 @@
                         <div class="text-lg mb-0.5">
                             <i class="fas fa-money-bill-wave" :style="paymentType === 'CASH' ? 'color: white;' : 'color: #10b981;'"></i>
                         </div>
-                        <span class="text-xs">CASH</span>
+                        <span class="text-xs">{{ __('pos.cash') }}</span>
                     </button>
                 </div>
 
                 {{-- CASH Input --}}
                 <div x-show="paymentType === 'CASH'" x-transition class="mb-3">
-                    <label class="block text-xs font-medium mb-1.5" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Cash Received</label>
+                    <label class="block text-xs font-medium mb-1.5" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ __('pos.payment') }}</label>
                     <div class="relative mb-2.5">
                         <span class="absolute left-3 top-1/2 transform -translate-y-1/2 font-medium" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Rp</span>
                         <input type="text" x-model="cashReceived" readonly
@@ -419,7 +429,7 @@
                         :class="processing || (paymentType === 'CASH' && (!cashReceived || Number(cashReceived) < cartTotal)) || !paymentType ? 'cursor-not-allowed opacity-50' : 'hover:shadow-lg transform hover:scale-105'"
                         :style="processing || (paymentType === 'CASH' && (!cashReceived || Number(cashReceived) < cartTotal)) || !paymentType ? 'background-color: #ccc;' : 'background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; color: {{ $shop->getProperty('text_color', '#F5E6D3') }};'"
                         class="w-full font-bold py-2.5 px-4 rounded-lg transition-all text-sm shadow-md">
-                    <span x-show="!processing">Confirm Payment</span>
+                    <span x-show="!processing">{{ __('pos.confirm_payment') }}</span>
                     <span x-show="processing">Processing...</span>
                 </button>
             </div>
@@ -489,6 +499,8 @@
                 lastOrder: null,
                 orderDetails: {},
                 cartCollapsed: false,
+                addingProducts: new Set(),
+                orderSubmissionToken: null,
 
                 async loadCart() {
                     try {
@@ -523,7 +535,19 @@
                     return Object.values(this.cart).reduce((total, item) => total + item.quantity, 0);
                 },
 
+                addingProducts: new Set(),
+                lastAddTime: {},
+
                 async addToCart(productId) {
+                    // Prevent double-click: check if already adding this product
+                    if (this.addingProducts.has(productId)) {
+                        console.log(`Already adding product ${productId}, request blocked`);
+                        return;
+                    }
+
+                    // Add to set of products being added
+                    this.addingProducts.add(productId);
+
                     try {
                         const res = await fetch('{{ route("pos.cart.add") }}', {
                             method: 'POST',
@@ -536,9 +560,18 @@
                             body: JSON.stringify({ product_id: productId, quantity: 1 })
                         });
                         const data = await res.json();
-                        this.cart = this.itemsToObject(data.items);
-                        this.cartTotal = Number(data.total);
-                    } catch (e) { console.error(e); }
+                        if (res.ok) {
+                            this.cart = this.itemsToObject(data.items);
+                            this.cartTotal = Number(data.total);
+                        } else {
+                            console.error('Failed to add to cart:', data.error);
+                        }
+                    } catch (e) { 
+                        console.error('Error adding to cart:', e); 
+                    } finally {
+                        // Remove from set when request completes
+                        this.addingProducts.delete(productId);
+                    }
                 },
 
                 async updateQty(cartId, qty) {
@@ -604,9 +637,23 @@
                 },
 
                 async submitOrder() {
+                    // Generate idempotency token for this order request
+                    if (!this.orderSubmissionToken) {
+                        this.orderSubmissionToken = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                    }
+
+                    // Don't allow duplicate submission
+                    if (this.processing) {
+                        console.log('Order submission already in progress');
+                        return;
+                    }
+
                     this.processing = true;
                     try {
-                        const body = { payment_type: this.paymentType };
+                        const body = { 
+                            payment_type: this.paymentType,
+                            idempotency_key: this.orderSubmissionToken 
+                        };
                         if (this.paymentType === 'CASH') {
                             body.cash_received = Number(this.cashReceived);
                         }
@@ -629,14 +676,16 @@
                             this.showSuccess = true;
                             this.paymentType = '';
                             this.cashReceived = '';
+                            this.orderSubmissionToken = null; // Reset token for next order
                         } else {
                             alert(data.error || 'Failed to place order');
                         }
                     } catch (e) {
                         console.error(e);
                         alert('Failed to place order');
+                    } finally {
+                        this.processing = false;
                     }
-                    this.processing = false;
                 },
 
                 async loadOrders() {
@@ -657,6 +706,16 @@
                         const data = await res.json();
                         this.orderDetails = data;
                     } catch (e) { console.error(e); }
+                },
+
+                getProductQuantity(productId) {
+                    let totalQty = 0;
+                    Object.values(this.cart).forEach(item => {
+                        if (item.product_id === productId) {
+                            totalQty += item.quantity;
+                        }
+                    });
+                    return totalQty;
                 },
 
                 formatRupiah(amount) {

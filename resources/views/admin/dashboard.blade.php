@@ -12,7 +12,7 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">Admin Dashboard</h2>
+        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">{{ __('admin.dashboard_title') }}</h2>
     </x-slot>
 
     <!-- Breadcrumb Navigation -->
@@ -31,7 +31,7 @@
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                         </div>
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-500">Today's Orders</p>
+                            <p class="text-xs sm:text-sm text-gray-500">{{ __('admin.todays_orders') }}</p>
                             <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ $todayOrders }}</p>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-500">Today's Revenue</p>
+                            <p class="text-xs sm:text-sm text-gray-500">{{ __('admin.todays_revenue') }}</p>
                             <p class="text-xs sm:text-2xl font-bold text-gray-900 truncate">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-500">Active Shifts</p>
+                            <p class="text-xs sm:text-sm text-gray-500">{{ __('admin.active_shifts') }}</p>
                             <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ $activeShifts->count() }}</p>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-500">Total Employees</p>
+                            <p class="text-xs sm:text-sm text-gray-500">{{ __('admin.total_employees') }}</p>
                             <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ $totalEmployees }}</p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                         <div class="flex items-center gap-2">
                             <span class="text-lg sm:text-2xl">📱</span>
                             <div>
-                                <p class="text-xs text-gray-600">Total QRIS</p>
+                                <p class="text-xs text-gray-600">{{ __('admin.total_qris') }}</p>
                                 <p class="text-sm sm:text-lg font-bold text-blue-700">Rp {{ number_format($paymentBreakdown['QRIS'], 0, ',', '.') }}</p>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                         <div class="flex items-center gap-2">
                             <span class="text-lg sm:text-2xl">💵</span>
                             <div>
-                                <p class="text-xs text-gray-600">Total CASH</p>
+                                <p class="text-xs text-gray-600">{{ __('admin.total_cash') }}</p>
                                 <p class="text-sm sm:text-lg font-bold text-green-700">Rp {{ number_format($paymentBreakdown['CASH'], 0, ',', '.') }}</p>
                             </div>
                         </div>

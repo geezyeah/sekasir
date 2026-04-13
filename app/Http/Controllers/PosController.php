@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class PosController extends Controller
 {
@@ -35,6 +36,21 @@ class PosController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
+
+        $userId = Auth::id();
+        $productId = $request->product_id;
+        
+        // Create a debounce key to prevent rapid duplicate additions
+        $debounceKey = "product_add_{$userId}_{$productId}";
+        
+        // Check if this product was just added in the last 500ms (prevents double-click)
+        if (Cache::has($debounceKey)) {
+            // Return current cart without processing the duplicate request
+            return $this->cartData();
+        }
+        
+        // Set debounce flag for 500ms
+        Cache::put($debounceKey, true, now()->addMilliseconds(500));
 
         $product = Product::findOrFail($request->product_id);
         $cart = $this->getSessionCart();

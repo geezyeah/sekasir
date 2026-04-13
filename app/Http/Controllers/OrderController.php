@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class OrderController extends Controller
 {
@@ -15,6 +16,7 @@ class OrderController extends Controller
         $request->validate([
             'payment_type' => 'required|in:QRIS,CASH',
             'cash_received' => 'nullable|numeric|min:0',
+            'idempotency_key' => 'nullable|string',
         ]);
 
         $user = Auth::user();
@@ -28,6 +30,23 @@ class OrderController extends Controller
 
         if (empty($cartItems)) {
             return response()->json(['error' => 'Cart is empty'], 422);
+        }
+
+        // Implement idempotency: check if we've already processed this request
+        $idempotencyKey = $request->input('idempotency_key');
+        if ($idempotencyKey) {
+            $cacheKey = "order_submission_{$idempotencyKey}";
+            
+            // Check if we've already processed this key
+            if (Cache::has($cacheKey)) {
+                $existingOrder = Cache::get($cacheKey);
+                return response()->json([
+                    'success' => true,
+                    'order' => Order::with('items.product')->find($existingOrder['id']),
+                    'message' => 'Order placed successfully! (Duplicate request prevented)',
+                    'duplicate' => true,
+                ]);
+            }
         }
 
         $totalAmount = collect($cartItems)->sum('subtotal');
@@ -79,6 +98,12 @@ class OrderController extends Controller
 
             return $order;
         });
+
+        // Cache the order result for 24 hours to prevent duplicate submissions
+        if ($idempotencyKey) {
+            $cacheKey = "order_submission_{$idempotencyKey}";
+            Cache::put($cacheKey, ['id' => $order->id], now()->addHours(24));
+        }
 
         $order->load('items.product');
 

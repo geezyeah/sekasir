@@ -19,59 +19,98 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">
-            Shop Settings
+            {{ __('admin.shop_settings') }}
         </h2>
     </x-slot>
 
-    <div class="py-4 sm:py-12" style="background-color: #242f6d; min-height: 450px;">
-        <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12" style="background-color: #242f6d; min-height: 450px;">
+        <div class="max-w-6xl mx-auto px-2 sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-2 sm:mb-4 bg-green-50 border border-green-200 rounded-lg p-2 sm:p-4">
-                    <p class="text-xs sm:text-sm text-green-800">{{ session('success') }}</p>
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-800 rounded-lg text-sm flex items-center gap-3 shadow-sm">
+                    <i class="fas fa-check-circle text-lg"></i>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 lg:gap-6">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2 mb-2">
+                    <i class="fas fa-store text-indigo-300"></i>
+                    Shop Configuration
+                </h2>
+                <p class="text-gray-300 text-sm">Manage your shop settings, branding, and colors</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach($shops as $shop)
-                    <div class="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-6 border-l-4" style="border-color: {{ $shop->getProperty('primary_color', '#4f46e5') }}">
-                        <div class="flex items-start justify-between mb-2 sm:mb-4">
-                            <div>
-                                <h3 class="text-sm sm:text-lg font-bold"><i class="fas {{ $shop->name === 'Ice Lepen' ? 'fa-ice-cream' : 'fa-bowl-food' }}" style="color: {{ $shop->name === 'Ice Lepen' ? '#c41e3a' : '#f39c12' }}; margin-right: 8px;"></i>{{ $shop->name }}</h3>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                        {{-- Header with border color --}}
+                        <div class="h-1" style="background-color: {{ $shop->getProperty('primary_color', '#4f46e5') }}"></div>
+                        
+                        <div class="p-6">
+                            {{-- Shop Title --}}
+                            <div class="flex items-start justify-between mb-6">
+                                <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                    <i class="fas {{ $shop->name === 'Ice Lepen' ? 'fa-ice-cream' : 'fa-bowl-food' }}" style="color: {{ $shop->name === 'Ice Lepen' ? '#c41e3a' : '#f39c12' }};"></i>
+                                    {{ $shop->name }}
+                                </h3>
+                                <a href="{{ route('admin.shops.edit', $shop) }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded hover:bg-indigo-50 transition-colors inline-flex items-center gap-1">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
                             </div>
-                            <a href="{{ route('admin.shops.edit', $shop) }}" class="text-xs sm:text-sm text-indigo-600 hover:text-indigo-800 transition-colors">
-                                Edit →
-                            </a>
-                        </div>
 
-                        {{-- Logo Preview --}}
-                        @if($shop->getProperty('logo_path'))
-                            <div class="mb-2 sm:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center" style="background-color: {{ $shop->getProperty('bg_color', '#ffffff') }}; min-height: 60px sm:min-height-80px;">
-                                <img src="{{ $shop->getProperty('logo_path') }}" alt="{{ $shop->name }} logo" class="h-12 sm:h-16 max-w-[100px] sm:max-w-[120px] object-contain">
-                            </div>
-                        @endif
-
-                        <div class="space-y-1.5 sm:space-y-3">
-                            <div class="flex items-center gap-1.5 sm:gap-3">
-                                <div class="text-xs sm:text-sm font-medium text-gray-600 min-w-fit">Background:</div>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded border border-gray-300" style="background-color: {{ $shop->getProperty('bg_color', '#ffffff') }}"></div>
-                                    <code class="text-xs bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded line-clamp-1">{{ $shop->getProperty('bg_color', '#ffffff') }}</code>
+                            {{-- Logo Preview --}}
+                            @if($shop->getProperty('logo_path'))
+                                <div class="mb-6 p-4 rounded-lg border-2 border-gray-200 flex items-center justify-center" style="background-color: {{ $shop->getProperty('bg_color', '#ffffff') }}; min-height: 100px;">
+                                    <img src="{{ $shop->getProperty('logo_path') }}" alt="{{ $shop->name }} logo" class="h-20 max-w-[140px] object-contain">
                                 </div>
-                            </div>
-
-                            <div class="flex items-center gap-1.5 sm:gap-3">
-                                <div class="text-xs sm:text-sm font-medium text-gray-600 min-w-fit">Text:</div>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded border border-gray-300" style="background-color: {{ $shop->getProperty('text_color', '#1f2937') }}"></div>
-                                    <code class="text-xs bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded line-clamp-1">{{ $shop->getProperty('text_color', '#1f2937') }}</code>
+                            @else
+                                <div class="mb-6 p-4 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 text-gray-400 text-sm min-height: 100px;">
+                                    <i class="fas fa-image text-3xl opacity-30"></i>
                                 </div>
-                            </div>
+                            @endif
 
-                            <div class="flex items-center gap-1.5 sm:gap-3">
-                                <div class="text-xs sm:text-sm font-medium text-gray-600 min-w-fit">Primary:</div>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded border border-gray-300" style="background-color: {{ $shop->getProperty('primary_color', '#4f46e5') }}"></div>
-                                    <code class="text-xs bg-gray-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded line-clamp-1">{{ $shop->getProperty('primary_color', '#4f46e5') }}</code>
+                            {{-- Color Settings --}}
+                            <div class="space-y-4">
+                                {{-- Background Color --}}
+                                <div class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-fill-drip text-indigo-600 text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-600 font-medium">{{ __('admin.background_color') }}</p>
+                                            <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-1 block">{{ $shop->getProperty('bg_color', '#ffffff') }}</code>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-lg border-2 border-gray-300 flex-shrink-0" style="background-color: {{ $shop->getProperty('bg_color', '#ffffff') }}"></div>
+                                </div>
+
+                                {{-- Text Color --}}
+                                <div class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-type text-blue-600 text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-600 font-medium">{{ __('admin.text_color') }}</p>
+                                            <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-1 block">{{ $shop->getProperty('text_color', '#1f2937') }}</code>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-lg border-2 border-gray-300 flex-shrink-0" style="background-color: {{ $shop->getProperty('text_color', '#1f2937') }}"></div>
+                                </div>
+
+                                {{-- Primary Color --}}
+                                <div class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-palette text-purple-600 text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-600 font-medium">Primary Color</p>
+                                            <code class="text-xs bg-gray-100 px-2 py-1 rounded mt-1 block">{{ $shop->getProperty('primary_color', '#4f46e5') }}</code>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-lg border-2 border-gray-300 flex-shrink-0" style="background-color: {{ $shop->getProperty('primary_color', '#4f46e5') }}"></div>
                                 </div>
                             </div>
                         </div>

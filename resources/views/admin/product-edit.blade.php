@@ -12,7 +12,7 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">Edit Product</h2>
+        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">{{ __('admin.edit_product') }}</h2>
     </x-slot>
 
     <!-- Breadcrumb Navigation -->
@@ -23,7 +23,7 @@
     ]" />
 
     <div class="py-6" style="background-color: #242f6d;">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-full lg:max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <form method="POST" action="{{ route('admin.products.update', $product) }}" class="space-y-6">
                     @csrf
@@ -46,7 +46,7 @@
 
                     <!-- Product Name -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.product_name') }}</label>
                         <input type="text" name="name" value="{{ old('name', $product->name) }}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         @error('name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -55,7 +55,7 @@
 
                     <!-- Price -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Price (IDR)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.price_idr') }}</label>
                         <input type="number" name="price" value="{{ old('price', $product->price) }}" required min="0" step="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         @error('price')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -64,7 +64,7 @@
 
                     <!-- Product Type -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.product_type') }}</label>
                         <select name="product_type_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="">Select Type</option>
                             @foreach($productTypes as $type)
@@ -82,7 +82,7 @@
                     <div class="flex items-center">
                         <input type="checkbox" name="is_seasonal" value="1" id="is_seasonal" {{ $product->is_seasonal ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                         <label for="is_seasonal" class="ml-2 text-sm font-medium text-gray-700">
-                            Seasonal Product
+                            {{ __('admin.mark_as_seasonal') }}
                         </label>
                     </div>
 

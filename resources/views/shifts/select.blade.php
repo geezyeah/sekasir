@@ -18,7 +18,7 @@
     </x-slot>
 
     <div class="py-4 sm:py-12" style="background-color: #242f6d;">
-        <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div class="max-w-full lg:max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <!-- Welcome Section -->
             <div class="text-center mb-8 sm:mb-12">
                 <h1 class="text-2xl sm:text-4xl font-bold text-white mb-2">Welcome, {{ Auth::user()->name }}! 👋</h1>
@@ -71,7 +71,7 @@
                             <div class="mb-6 p-3 rounded-lg border text-center" style="border-color: {{ $bgColor }}; background-color: rgba(255, 255, 255, 0.5);">
                                 <div class="flex items-center justify-center gap-2">
                                     <span class="inline-block w-2 h-2 rounded-full" style="background-color: {{ $bgColor }};"></span>
-                                    <span class="text-xs sm:text-sm font-medium" style="color: {{ $bgColor }};">Ready to operate</span>
+                                    <span class="text-xs sm:text-sm font-medium" style="color: {{ $bgColor }};">{{ __('pos.active') }}</span>
                                 </div>
                             </div>
 

@@ -28,7 +28,7 @@
     ]" />
 
     <div class="py-12" style="background-color: #242f6d;">
-        <div class="max-w-2xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="max-w-full lg:max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
             <form method="POST" action="{{ route('admin.shops.update', $shop) }}" class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 @csrf
                 @method('PATCH')
@@ -57,7 +57,7 @@
                     </div>
 
                     <div>
-                        <label for="bg_color" class="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+                        <label for="bg_color" class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.background_color') }}</label>
                         <div class="flex items-center gap-3">
                             <input type="color" id="bg_color" name="bg_color" value="{{ $shop->getProperty('bg_color', '#ffffff') }}" class="w-16 h-16 rounded border border-gray-300 cursor-pointer">
                             <div>
@@ -71,7 +71,7 @@
                     </div>
 
                     <div>
-                        <label for="text_color" class="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+                        <label for="text_color" class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.text_color') }}</label>
                         <div class="flex items-center gap-3">
                             <input type="color" id="text_color" name="text_color" value="{{ $shop->getProperty('text_color', '#1f2937') }}" class="w-16 h-16 rounded border border-gray-300 cursor-pointer">
                             <div>
@@ -85,7 +85,7 @@
                     </div>
 
                     <div>
-                        <label for="primary_color" class="block text-sm font-medium text-gray-700 mb-2">Primary/Accent Color</label>
+                        <label for="primary_color" class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.primary_color') }}</label>
                         <div class="flex items-center gap-3">
                             <input type="color" id="primary_color" name="primary_color" value="{{ $shop->getProperty('primary_color', '#4f46e5') }}" class="w-16 h-16 rounded border border-gray-300 cursor-pointer">
                             <div>
@@ -100,7 +100,7 @@
 
                     {{-- Preview --}}
                     <div class="mt-8 pt-8 border-t border-gray-200">
-                        <h3 class="text-sm font-semibold text-gray-900 mb-4">Preview</h3>
+                        <h3 class="text-sm font-semibold text-gray-900 mb-4">{{ __('admin.preview') }}</h3>
                         <div class="rounded-lg overflow-hidden shadow-sm" style="background-color: {{ $shop->getProperty('bg_color', '#ffffff') }}; color: {{ $shop->getProperty('text_color', '#1f2937') }}; padding: 2rem;">
                             <h4 class="text-2xl font-bold mb-2">{{ $shop->name }}</h4>
                             <p class="mb-4">This is how the POS page will look with these colors.</p>

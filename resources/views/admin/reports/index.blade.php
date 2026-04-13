@@ -17,7 +17,7 @@
     </style>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">General Reports</h2>
+        <h2 class="font-semibold text-lg sm:text-xl text-white leading-tight">{{ __('admin.reports_title') }}</h2>
     </x-slot>
 
     <!-- Breadcrumb Navigation -->
@@ -41,15 +41,15 @@
                         </select>
                     </div>
                     <div class="flex-1 min-w-fit sm:min-w-max">
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">{{ __('admin.start_date') }}</label>
                         <input type="date" name="start_date" value="{{ $startDate }}" class="w-full px-2 py-1.5 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs">
                     </div>
                     <div class="flex-1 min-w-fit sm:min-w-max">
-                        <label class="block text-xs font-medium text-gray-700 mb-1">End Date</label>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">{{ __('admin.end_date') }}</label>
                         <input type="date" name="end_date" value="{{ $endDate }}" class="w-full px-2 py-1.5 border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs">
                     </div>
                     <div class="flex gap-1 w-full sm:w-auto">
-                        <button type="submit" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">Generate</button>
+                        <button type="submit" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">{{ __('admin.generate') }}</button>
                         <a href="{{ route('admin.reports') }}" class="flex-1 sm:flex-none text-xs text-gray-500 hover:text-gray-700 px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center">Reset</a>
                     </div>
                 </form>
@@ -61,7 +61,7 @@
                 <div class="bg-white rounded-lg p-2 sm:p-6 shadow-sm">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                         <div class="mb-2 sm:mb-0">
-                            <p class="text-xs text-gray-500">Total Revenue</p>
+                            <p class="text-xs text-gray-500">{{ __('admin.total_revenue') }}</p>
                             <p class="text-base sm:text-2xl font-bold text-gray-900">Rp {{ number_format($revenueStats['total_revenue'], 0, ',', '.') }}</p>
                         </div>
                         <div class="p-2 bg-blue-100 rounded-lg w-fit sm:w-auto">
@@ -91,7 +91,7 @@
                 <div class="bg-white rounded-lg p-2 sm:p-6 shadow-sm">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                         <div class="mb-2 sm:mb-0">
-                            <p class="text-xs text-gray-500">Avg Order Value</p>
+                            <p class="text-xs text-gray-500">{{ __('admin.average_order_value') }}</p>
                             <p class="text-base sm:text-2xl font-bold text-gray-900">Rp {{ number_format($revenueStats['average_order_value'], 0, ',', '.') }}</p>
                         </div>
                         <div class="p-2 bg-purple-100 rounded-lg w-fit sm:w-auto">

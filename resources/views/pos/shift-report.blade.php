@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4">
             <h2 class="font-bold text-lg sm:text-xl leading-tight" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
-                {{ $shop->name }} Shift Report
+                {{ $shop->name }} {{ __('pos.shift_report') }}
             </h2>
-            <a href="{{ route('pos.index') }}" class="text-xs sm:text-sm transition-colors self-start sm:self-auto" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">← Back</a>
+            <a href="{{ route('pos.index') }}" class="text-xs sm:text-sm transition-colors self-start sm:self-auto" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">← {{ __('pos.end_shift') }}</a>
         </div>
     </x-slot>
     <!-- Breadcrumb Navigation -->
@@ -19,19 +19,19 @@
             <div class="grid grid-cols-3 md:grid-cols-3 gap-1.5 sm:gap-3 mb-3 sm:mb-6">
                 {{-- Employee --}}
                 <div class="bg-white rounded-lg shadow-sm p-2 sm:p-3 border-l-3 border-blue-500">
-                    <p class="text-xs text-gray-500 font-medium mb-0.5">Employee</p>
+                    <p class="text-xs text-gray-500 font-medium mb-0.5">{{ __('pos.employee') }}</p>
                     <p class="text-xs sm:text-sm font-bold text-gray-900">{{ $shift->user->name }}</p>
                 </div>
 
                 {{-- Shift Duration --}}
                 <div class="bg-white rounded-lg shadow-sm p-2 sm:p-3 border-l-3 border-green-500">
-                    <p class="text-xs text-gray-500 font-medium mb-0.5">Started</p>
+                    <p class="text-xs text-gray-500 font-medium mb-0.5">{{ __('pos.started') }}</p>
                     <p class="text-xs sm:text-sm font-bold text-gray-900">{{ $shift->login_time->format('d M H:i') }}</p>
                 </div>
 
                 {{-- Total Orders --}}
                 <div class="bg-white rounded-lg shadow-sm p-2 sm:p-3 border-l-3 border-purple-500">
-                    <p class="text-xs text-gray-500 font-medium mb-0.5">Orders</p>
+                    <p class="text-xs text-gray-500 font-medium mb-0.5">{{ __('pos.items') }}</p>
                     <p class="text-xs sm:text-sm font-bold text-gray-900">{{ $shiftOrders->count() }}</p>
                 </div>
             </div>
@@ -40,19 +40,19 @@
             <div class="bg-gradient-to-br rounded-lg shadow-md p-3 sm:p-5 mb-3 sm:mb-6 text-white" style="background: linear-gradient(to bottom right, {{ $shop->getProperty('bg_color', '#8d140c') }}, {{ $shop->getProperty('primary_color', '#9d2121') }});">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                     <div>
-                        <p class="text-xs uppercase font-semibold tracking-wide opacity-90 mb-0.5">Revenue</p>
+                        <p class="text-xs uppercase font-semibold tracking-wide opacity-90 mb-0.5">{{ __('pos.total') }}</p>
                         <p class="text-xl sm:text-2xl font-bold">Rp {{ number_format($shiftTotalAmount, 0, ',', '.') }}</p>
                     </div>
                     <div class="text-right sm:text-center">
                         <p class="text-2xl sm:text-3xl font-bold">{{ $totalItems }}</p>
-                        <p class="text-xs opacity-90">items sold</p>
+                        <p class="text-xs opacity-90">{{ __('pos.items_sold') }}</p>
                     </div>
                 </div>
             </div>
 
             {{-- Orders Table/Cards --}}
             <div class="bg-white rounded-lg shadow-sm p-3 sm:p-5 mb-3 sm:mb-6">
-                <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">Orders</h3>
+                <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">{{ __('pos.items') }}</h3>
 
                 @if($shiftOrders->count() > 0)
                     {{-- Mobile View (Cards) --}}
@@ -78,12 +78,12 @@
                         <table class="w-full text-sm">
                             <thead class="border-b border-gray-200">
                                 <tr>
-                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">Order ID</th>
-                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">Time</th>
-                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">Items</th>
-                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">Payment</th>
-                                    <th class="text-right py-2 px-2 font-semibold text-gray-700">Amount</th>
-                                    <th class="text-center py-2 px-2 font-semibold text-gray-700">Action</th>
+                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">{{ __('pos.order_id') }}</th>
+                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">{{ __('pos.time') }}</th>
+                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">{{ __('pos.items') }}</th>
+                                    <th class="text-left py-2 px-2 font-semibold text-gray-700">{{ __('pos.payment') }}</th>
+                                    <th class="text-right py-2 px-2 font-semibold text-gray-700">{{ __('pos.amount') }}</th>
+                                    <th class="text-center py-2 px-2 font-semibold text-gray-700">{{ __('pos.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -110,7 +110,7 @@
                     </div>
                 @else
                     <div class="text-center py-6 sm:py-8">
-                        <p class="text-gray-500 text-sm">No orders yet this shift</p>
+                        <p class="text-gray-500 text-sm">{{ __('pos.no_orders_yet') }}</p>
                     </div>
                 @endif
             </div>
@@ -118,7 +118,7 @@
             {{-- Order Details Breakdown --}}
             @if($shiftOrders->count() > 0)
                 <div class="bg-white rounded-lg shadow-sm p-3 sm:p-5">
-                    <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">Products Summary</h3>
+                    <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">{{ __('pos.products_summary') }}</h3>
                     
                     @php
                         $productSummary = collect();

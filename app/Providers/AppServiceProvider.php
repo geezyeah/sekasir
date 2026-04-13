@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Set locale from session
+        if (session()->has('locale')) {
+            app()->setLocale(session('locale'));
+        }
+
         View::composer('layouts.app', function ($view) {
             if (Auth::check()) {
                 $user = Auth::user();

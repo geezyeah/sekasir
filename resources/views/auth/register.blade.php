@@ -4,7 +4,7 @@
 
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Full Name')" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="name" :value="__('auth.full_name')" class="text-sm font-semibold text-gray-700" />
             <x-text-input 
                 id="name" 
                 class="block mt-2 w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" 
@@ -21,7 +21,7 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email Address')" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="email" :value="__('auth.email_address')" class="text-sm font-semibold text-gray-700" />
             <x-text-input 
                 id="email" 
                 class="block mt-2 w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" 
@@ -37,7 +37,7 @@
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="password" :value="__('auth.password')" class="text-sm font-semibold text-gray-700" />
 
             <x-text-input 
                 id="password" 
@@ -54,7 +54,7 @@
 
         <!-- Confirm Password -->
         <div>
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="text-sm font-semibold text-gray-700" />
+            <x-input-label for="password_confirmation" :value="__('auth.confirm_password_title')" class="text-sm font-semibold text-gray-700" />
 
             <x-text-input 
                 id="password_confirmation" 
