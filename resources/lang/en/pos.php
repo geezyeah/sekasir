@@ -62,4 +62,9 @@ return [
     'order_submitted' => 'Order submitted successfully',
     'shift_ended' => 'Shift ended successfully',
     'shift_started_success' => 'Shift started successfully',
+
+    // Error Messages
+    'duplicate_shift_warning' => 'You already have an active shift. Please end it first if you want to start a new one.',
+    'no_authorized_shops' => 'You are not authorized for any shop. Please contact the administrator.',
+    'no_products_in_shop' => 'This shop has no products configured yet. Please contact the administrator to add products before starting a shift.',
 ];

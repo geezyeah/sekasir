@@ -9,7 +9,7 @@
 <x-dropdown align="right" width="48">
     <x-slot name="trigger">
         <button class="inline-flex items-center px-2 sm:px-3 py-2 border border-transparent text-xs sm:text-sm leading-4 font-medium rounded-md hover:opacity-75 focus:outline-none transition ease-in-out duration-150"
-                style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: white; background-color: transparent; @elseif($activeShop ?? false) color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; background-color: transparent; @else color: white; background-color: rgba(255, 255, 255, 0.2); @endif">
+                style="color: white; background-color: transparent;">
             <i class="fas fa-globe mr-1"></i>
             <span class="hidden lg:inline text-xs">{{ strtoupper($currentLocale) }}</span>
             <div class="ms-1">

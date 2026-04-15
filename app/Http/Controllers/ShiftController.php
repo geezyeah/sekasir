@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Shift;
 use App\Models\Shop;
 use Illuminate\Http\Request;
@@ -14,18 +15,20 @@ class ShiftController extends Controller
         $user = Auth::user();
         $activeShift = $user->activeShift;
 
-        if ($activeShift) {
-            return redirect()->route('pos.index');
-        }
-
         // Admins see all shops, employees see only authorized shops
         if ($user->isAdmin()) {
             $shops = Shop::all();
         } else {
             $shops = $user->authorizedShops;
+            
+            // Check if non-admin user has any authorized shops
+            if ($shops->isEmpty()) {
+                return redirect()->route('dashboard')
+                    ->with('warning', __('pos.no_authorized_shops'));
+            }
         }
 
-        return view('shifts.select', compact('shops'));
+        return view('shifts.select', compact('shops', 'activeShift'));
     }
 
     public function start(Request $request)
@@ -39,6 +42,25 @@ class ShiftController extends Controller
         // Check if user already has an active shift
         if ($user->activeShift) {
             return redirect()->route('pos.index');
+        }
+
+        // Get the shop and verify authorization
+        $shop = Shop::findOrFail($request->shop_id);
+        
+        // For non-admin users, check if they are authorized for this shop
+        if (!$user->isAdmin() && !$user->authorizedShops->contains($shop->id)) {
+            return redirect()->route('shifts.select')
+                ->with('error', __('pos.no_authorized_shops'));
+        }
+
+        // Check if shop has any active products
+        $productCount = Product::where('shop_id', $shop->id)
+            ->where('is_active', true)
+            ->count();
+        
+        if ($productCount === 0) {
+            return redirect()->route('shifts.select')
+                ->with('warning', __('pos.no_products_in_shop'));
         }
 
         Shift::create([

@@ -34,7 +34,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     // Shift Management
     Route::get('/shifts/select', [ShiftController::class, 'select'])->name('shifts.select');
-    Route::post('/shifts/start', [ShiftController::class, 'start'])->name('shifts.start');
+    Route::post('/shifts/start', [ShiftController::class, 'start'])->middleware(['prevent-duplicate-shift'])->name('shifts.start');
     Route::post('/shifts/end', [ShiftController::class, 'end'])->name('shifts.end');
     Route::get('/shifts/history', [ShiftController::class, 'history'])->name('shifts.history');
 

@@ -1,5 +1,14 @@
 <nav x-data="{ open: false }" 
-    style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) background-color: #242f6d; color: white; border-bottom: 1px solid rgba(255, 255, 255, 0.1); @elseif($activeShop ?? false) background-color: {{ $activeShop->getProperty('bg_color', '#ffffff') }}; color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; border-bottom: 1px solid {{ $activeShop->getProperty('text_color', '#1f2937') }}; border-opacity: 0.3; @else background-color: white; color: #1f2937; border-bottom: 1px solid #f3f4f6; @endif"
+    style="@php
+        $shop = Auth::user()->activeShift?->shop ?? request()->shop;
+        if(Auth::user()->isAdmin() && !Auth::user()->activeShift) {
+            echo 'background-color: #242f6d; color: white; border-bottom: 1px solid rgba(255, 255, 255, 0.1);';
+        } elseif($shop ?? false) {
+            echo 'background-color: ' . $shop->getProperty('bg_color', '#242f6d') . '; color: ' . $shop->getProperty('text_color', '#ffffff') . '; border-bottom: 1px solid ' . $shop->getProperty('text_color', '#ffffff') . '; border-opacity: 0.3;';
+        } else {
+            echo 'background-color: #242f6d; color: white; border-bottom: 1px solid rgba(255, 255, 255, 0.1);';
+        }
+    @endphp"
 >
     <div class="max-w-full sm:max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         <div class="flex justify-between h-14 sm:h-16">
@@ -71,7 +80,7 @@
                 <x-language-switcher />
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: white; background-color: transparent; @elseif($activeShop ?? false) color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; background-color: transparent; @else color: white; background-color: rgba(255, 255, 255, 0.2); @endif" class="inline-flex items-center px-2 sm:px-3 py-2 border border-transparent text-xs sm:text-sm leading-4 font-medium rounded-md hover:opacity-75 focus:outline-none transition ease-in-out duration-150">
+                        <button style="color: white; background-color: transparent;" class="inline-flex items-center px-2 sm:px-3 py-2 border border-transparent text-xs sm:text-sm leading-4 font-medium rounded-md hover:opacity-75 focus:outline-none transition ease-in-out duration-150">
                             <div class="truncate max-w-20 sm:max-w-none">{{ Auth::user()->name }}</div>
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -116,7 +125,7 @@
                         {{ Str::limit(Auth::user()->activeShift->shop->name, 6) }}
                     </span>
                 @endif -->
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md transition duration-150 ease-in-out" :style="'@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: rgba(255, 255, 255, 0.6); @else color: #9ca3af; @endif'">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md transition duration-150 ease-in-out" style="color: white;">
                     <svg class="h-5 w-5 sm:h-6 sm:w-6 hover:opacity-80 focus:opacity-80" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -126,8 +135,8 @@
         </div>
     </div>
 
-            <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) background-color: #242f6d; color: white; @elseif($activeShop ?? false) background-color: {{ $activeShop->getProperty('bg_color', '#ffffff') }}; color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; @else background-color: #f9fafb; color: #1f2937; @endif">
-        <div class="pt-2 pb-3 space-y-1 px-3 border-b-2" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) border-color: rgba(255, 255, 255, 0.2); @elseif($activeShop ?? false) border-color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; border-opacity: 0.2; @else border-color: #e5e7eb; @endif">
+            <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden" style="background-color: #242f6d; color: white; border-color: rgba(255, 255, 255, 0.2);">
+        <div class="pt-2 pb-3 space-y-1 px-3 border-b-2" style="border-color: rgba(255, 255, 255, 0.2);">
             @if(Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-xs sm:text-sm flex items-center gap-2">
                     <i class="fas fa-gauge-high w-4"></i>
@@ -175,19 +184,19 @@
 
         </div>
 
-        <div class="px-3 py-2 border-t-2" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) border-color: rgba(255, 255, 255, 0.2); @elseif($activeShop ?? false) border-color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; border-opacity: 0.2; @else border-color: #e5e7eb; @endif">
+        <div class="px-3 py-2 border-t-2" style="border-color: rgba(255, 255, 255, 0.2);">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold opacity-75" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: rgba(255, 255, 255, 0.8); @else color: #6b7280; @endif">{{ __('common.language') }}</span>
+                <span class="text-xs font-semibold opacity-75" style="color: rgba(255, 255, 255, 0.8);">{{ __('common.language') }}</span>
                 <div class="flex gap-1">
-                    <a href="{{ route('language.switch', 'en') }}" class="px-2 py-1 text-xs rounded {{ app()->getLocale() === 'en' ? 'bg-indigo-600 text-white font-semibold' : 'bg-opacity-20 opacity-60' }}" style="@if(app()->getLocale() !== 'en') @if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) background-color: rgba(255, 255, 255, 0.2); color: white; @else background-color: #f3f4f6; color: #6b7280; @endif @endif">EN</a>
-                    <a href="{{ route('language.switch', 'id') }}" class="px-2 py-1 text-xs rounded {{ app()->getLocale() === 'id' ? 'bg-indigo-600 text-white font-semibold' : 'bg-opacity-20 opacity-60' }}" style="@if(app()->getLocale() !== 'id') @if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) background-color: rgba(255, 255, 255, 0.2); color: white; @else background-color: #f3f4f6; color: #6b7280; @endif @endif">ID</a>
+                    <a href="{{ route('language.switch', 'en') }}" class="px-2 py-1 text-xs rounded text-white font-semibold {{ app()->getLocale() === 'en' ? 'bg-indigo-600' : 'bg-opacity-20 opacity-60' }}" style="background-color: {{ app()->getLocale() === 'en' ? '' : 'rgba(255, 255, 255, 0.2);' }}">EN</a>
+                    <a href="{{ route('language.switch', 'id') }}" class="px-2 py-1 text-xs rounded text-white font-semibold {{ app()->getLocale() === 'id' ? 'bg-indigo-600' : 'bg-opacity-20 opacity-60' }}" style="background-color: {{ app()->getLocale() === 'id' ? '' : 'rgba(255, 255, 255, 0.2);' }}">ID</a>
                 </div>
             </div>
         </div>
 
-        <div class="pt-3 pb-2 px-3" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) border-top: 2px solid rgba(255, 255, 255, 0.2); @elseif($activeShop ?? false) border-top: 2px solid {{ $activeShop->getProperty('text_color', '#1f2937') }}; border-opacity: 0.3; @else border-top: 1px solid #e5e7eb; @endif">
-            <div class="font-medium text-xs sm:text-base truncate" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: white; @elseif($activeShop ?? false) color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; @else color: #1f2937; @endif">{{ Auth::user()->name }}</div>
-            <div class="font-medium text-xs" style="@if(Auth::user()->isAdmin() || request()->routeIs('shifts.select')) color: rgba(255, 255, 255, 0.8); @elseif($activeShop ?? false) color: {{ $activeShop->getProperty('text_color', '#1f2937') }}; opacity: 0.8; @else color: #6b7280; @endif">{{ Auth::user()->email }}</div>
+        <div class="pt-3 pb-2 px-3" style="border-top: 2px solid rgba(255, 255, 255, 0.2);">
+            <div class="font-medium text-xs sm:text-base truncate" style="color: white;">{{ Auth::user()->name }}</div>
+            <div class="font-medium text-xs" style="color: rgba(255, 255, 255, 0.8);">{{ Auth::user()->email }}</div>
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')" class="text-xs sm:text-sm flex items-center gap-2">

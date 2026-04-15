@@ -1,15 +1,15 @@
 <section>
-    <header>
-        <h2 class="text-base sm:text-lg font-medium text-gray-900">
+    <header class="mb-4 sm:mb-6 p-4 sm:p-5" style="background-color: {{ $bgColor ?? '#1f2937' }}; border-bottom: 3px solid rgba(255, 255, 255, 0.1);">
+        <h2 class="text-base sm:text-lg font-bold" style="color: white;">
             {{ __('Update Password') }}
         </h2>
-
-        <p class="mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-600">
+        <p class="mt-1 text-xs sm:text-sm" style="color: rgba(255, 255, 255, 0.8);">
             {{ __('Ensure your account is using a long, random password to stay secure.') }}
         </p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-3 sm:mt-6 space-y-3 sm:space-y-6">
+    <div class="px-4 sm:px-5 py-4 sm:py-6">
+        <form method="post" action="{{ route('password.update') }}" class="space-y-3 sm:space-y-6">
         @csrf
         @method('put')
 
@@ -32,7 +32,9 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest transition ease-in-out duration-150 hover:opacity-90" style="background-color: {{ $bgColor ?? '#1f2937' }};">
+                {{ __('Save') }}
+            </button>
 
             @if (session('status') === 'password-updated')
                 <p
@@ -45,4 +47,5 @@
             @endif
         </div>
     </form>
+    </div>
 </section>

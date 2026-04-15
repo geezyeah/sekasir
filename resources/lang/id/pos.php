@@ -62,4 +62,9 @@ return [
     'order_submitted' => 'Pesanan Berhasil Dikirim',
     'shift_ended' => 'Shift Berhasil Diakhiri',
     'shift_started_success' => 'Shift Berhasil Dimulai',
+
+    // Error Messages
+    'duplicate_shift_warning' => 'Anda sudah memiliki shift aktif. Silakan akhiri terlebih dahulu jika ingin memulai yang baru.',
+    'no_authorized_shops' => 'Anda tidak memiliki akses ke toko manapun. Silakan hubungi administrator.',
+    'no_products_in_shop' => 'Toko ini belum memiliki produk. Silakan hubungi administrator untuk menambahkan produk sebelum memulai shift.',
 ];
