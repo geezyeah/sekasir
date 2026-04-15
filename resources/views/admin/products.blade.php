@@ -126,6 +126,9 @@
                                         } elseif(str_contains($typeName, 'package')) {
                                             $typeIcon = 'fa-box-open';
                                             $typeColor = '#e74c3c';
+                                        } elseif(str_contains($typeName, 'drink')) {
+                                            $typeIcon = 'fa-bottle-water';
+                                            $typeColor = '#3498db';
                                         }
                                     @endphp
                                     <span class="text-gray-900 font-semibold flex items-center gap-2">
@@ -216,6 +219,9 @@
                                                 } elseif(str_contains($typeName, 'package')) {
                                                     $typeIcon = 'fa-box-open';
                                                     $typeColor = '#e74c3c';
+                                                } elseif(str_contains($typeName, 'drink')) {
+                                                    $typeIcon = 'fa-bottle-water';
+                                                    $typeColor = '#3498db';
                                                 }
                                             @endphp
                                             <span class="flex items-center gap-2 font-semibold">

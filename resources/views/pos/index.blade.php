@@ -317,6 +317,9 @@
                                                 } elseif(str_contains($typeName, 'package')) {
                                                     $typeIcon = 'fa-box-open';
                                                     $typeColor = '#e74c3c';
+                                                } elseif(str_contains($typeName, 'drink')) {
+                                                    $typeIcon = 'fa-bottle-water';
+                                                    $typeColor = '#3498db';
                                                 }
                                             }
                                         @endphp

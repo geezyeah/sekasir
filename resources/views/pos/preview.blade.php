@@ -73,6 +73,9 @@
                                             } elseif(str_contains($typeName, 'package')) {
                                                 $typeIcon = 'fa-box-open';
                                                 $typeColor = '#e74c3c';
+                                            } elseif(str_contains($typeName, 'drink')) {
+                                                $typeIcon = 'fa-bottle-water';
+                                                $typeColor = '#3498db';
                                             }
                                         }
                                     @endphp
@@ -100,11 +103,6 @@
                                 @if($product->is_seasonal)
                                     <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full mt-2">Seasonal</span>
                                 @endif
-
-                                <!-- Disabled Badge -->
-                                <span class="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded mt-2 font-medium">
-                                    🔒 Preview
-                                </span>
                             </div>
                         @endforeach
                     </div>
