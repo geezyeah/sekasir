@@ -6,7 +6,7 @@ return [
     'logout' => 'Keluar',
     'register' => 'Daftar',
     'create_account' => 'Buat Akun',
-    'dashboard' => 'Dasbor',
+    'dashboard' => 'Dashboard',
     'back' => 'Kembali',
     'cancel' => 'Batal',
     'save' => 'Simpan',

@@ -30,7 +30,7 @@ return [
     'total' => 'Total',
     'submit_order' => 'Kirim Pesanan',
     'quantity' => 'Jumlah',
-    'each' => 'Setiap',
+    'each' => 'Per Barang',
 
     // Payment
     'select_payment_method' => 'Pilih Metode Pembayaran',

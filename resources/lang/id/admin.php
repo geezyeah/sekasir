@@ -2,7 +2,7 @@
 
 return [
     // Dashboard
-    'dashboard_title' => 'Dasbor Admin',
+    'dashboard_title' => 'Dasboard Admin',
     'todays_orders' => 'Pesanan Hari Ini',
     'todays_revenue' => 'Pendapatan Hari Ini',
     'active_shifts' => 'Shift Aktif',
