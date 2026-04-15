@@ -358,6 +358,11 @@
                 <div class="text-center mb-4 p-2.5 rounded-xl" style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
                     <p class="text-xs" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.8;">{{ __('pos.total') }}</p>
                     <p class="text-2xl font-bold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" x-text="formatRupiah(cartTotal)"></p>
+                    <p class="text-xs mt-1" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }}; opacity: 0.7;" x-show="cashReceived">
+                        <span x-show="Number(cashReceived) >= cartTotal">Change: </span>
+                        <span x-show="Number(cashReceived) < cartTotal">Remaining: </span>
+                        <span x-text="cashReceived ? formatRupiah(Math.abs(Number(cashReceived) - cartTotal)) : ''"></span>
+                    </p>
                 </div>
 
                 {{-- Payment Type Selection --}}
@@ -407,21 +412,6 @@
                             </button>
                         </template>
                     </div>
-
-                    {{-- Change Amount --}}
-                    <div x-show="cashReceived && Number(cashReceived) >= cartTotal" class="mb-2.5 p-2.5 rounded-lg" style="background-color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-medium" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Change</span>
-                            <span class="text-base font-bold" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};" x-text="formatRupiah(Number(cashReceived) - cartTotal)"></span>
-                        </div>
-                    </div>
-                    <div x-show="cashReceived && Number(cashReceived) < cartTotal" class="mb-2.5 p-2.5 rounded-lg" style="background-color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-medium" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};">Insufficient</span>
-                            <span class="text-base font-bold" style="color: {{ $shop->getProperty('text_color', '#F5E6D3') }};" x-text="formatRupiah(cartTotal - Number(cashReceived))"></span>
-                        </div>
-                    </div>
-                </div>
 
                 {{-- Submit --}}
                 <button @click="submitOrder()"
