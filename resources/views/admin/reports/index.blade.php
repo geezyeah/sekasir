@@ -188,7 +188,7 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse($topProducts as $product)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-2 sm:px-4 py-2 font-medium text-gray-900">{{ Str::limit($product->name, 12) }}</td>
+                                    <td class="px-2 sm:px-4 py-2 font-medium text-gray-900">{{ $product->name }}</td>
                                     <td class="px-2 sm:px-4 py-2 text-gray-600">{{ $product->total_quantity }}</td>
                                     <td class="px-2 sm:px-4 py-2 font-medium text-gray-900">Rp {{ number_format($product->total_revenue, 0, ',', '.') }}</td>
                                     <td class="px-2 sm:px-4 py-2 hidden sm:table-cell text-gray-600">Rp {{ number_format($product->avg_price, 0, ',', '.') }}</td>

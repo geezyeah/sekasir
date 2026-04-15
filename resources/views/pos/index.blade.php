@@ -306,6 +306,9 @@
                                         @endif
                                     </div>
                                     <span class="text-xs md:text-sm font-semibold text-center leading-tight line-clamp-2" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ $product->name }}</span>
+                                    @if($product->productType)
+                                        <span class="text-xs font-medium text-center" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.7;">{{ $product->productType->name }}</span>
+                                    @endif
                                     <span class="text-xs md:text-sm font-bold mt-0.5 md:mt-1" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                                     @if($product->is_seasonal)
                                         <span class="text-xs bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded-full mt-0.5">Seasonal</span>

@@ -9,7 +9,7 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date', now()->subDays(30)->format('Y-m-d'));
+        $startDate = $request->input('start_date', now()->format('Y-m-d'));
         $endDate = $request->input('end_date', now()->format('Y-m-d'));
         $shopId = $request->input('shop_id');
 
