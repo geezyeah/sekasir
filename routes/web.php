@@ -117,6 +117,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/shops', [AdminController::class, 'shops'])->name('shops');
     Route::get('/shops/{shop}/edit', [AdminController::class, 'editShop'])->name('shops.edit');
     Route::patch('/shops/{shop}', [AdminController::class, 'updateShop'])->name('shops.update');
+    Route::get('/shops/{shop}/preview', [AdminController::class, 'previewShopStorefront'])->name('shops.preview');
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports');
 });
 

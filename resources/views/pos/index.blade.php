@@ -295,19 +295,36 @@
                                     </div>
 
                                     <div class="text-xl md:text-3xl mb-0.5 flex items-center justify-center">
-                                        @if($shop->name === 'Ice Lepen')
-                                            @if($product->productType && str_contains(strtolower($product->productType->name), 'cone'))
-                                                <i class="fas fa-ice-cream" style="color: #c41e3a;"></i>
-                                            @else
-                                                <i class="fas fa-ice-cream" style="color: #c41e3a;"></i>
-                                            @endif
-                                        @else
-                                            <i class="fas fa-bowl-food" style="color: #f39c12;"></i>
-                                        @endif
+                                        @php
+                                            $typeIcon = 'fa-ice-cream';
+                                            $typeColor = '#c41e3a';
+                                            
+                                            if($product->productType) {
+                                                $typeName = strtolower($product->productType->name);
+                                                
+                                                if(str_contains($typeName, 'cone')) {
+                                                    $typeIcon = 'fa-ice-cream';
+                                                    $typeColor = '#c41e3a';
+                                                } elseif(str_contains($typeName, 'cup')) {
+                                                    $typeIcon = 'fa-whiskey-glass';
+                                                    $typeColor = '#8b5a3c';
+                                                } elseif(str_contains($typeName, 'bowl')) {
+                                                    $typeIcon = 'fa-bowl-food';
+                                                    $typeColor = '#f39c12';
+                                                } elseif(str_contains($typeName, 'box')) {
+                                                    $typeIcon = 'fa-box';
+                                                    $typeColor = '#9b59b6';
+                                                } elseif(str_contains($typeName, 'package')) {
+                                                    $typeIcon = 'fa-box-open';
+                                                    $typeColor = '#e74c3c';
+                                                }
+                                            }
+                                        @endphp
+                                        <i class="fas {{ $typeIcon }}" style="color: {{ $typeColor }};"></i>
                                     </div>
                                     <span class="text-xs md:text-sm font-semibold text-center leading-tight line-clamp-2" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">{{ $product->name }}</span>
                                     @if($product->productType)
-                                        <span class="text-xs font-medium text-center" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.7;">{{ $product->productType->name }}</span>
+                                        <span class="text-xs font-medium text-center" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }}; opacity: 0.7;">{{ strtoupper($product->productType->name) }}</span>
                                     @endif
                                     <span class="text-xs md:text-sm font-bold mt-0.5 md:mt-1" style="color: {{ $shop->getProperty('bg_color', '#A31F1F') }};">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                                     @if($product->is_seasonal)
@@ -495,16 +512,20 @@
                 cartCollapsed: false,
                 addingProducts: new Set(),
                 orderSubmissionToken: null,
+                cartStorageKey: 'pos_cart_{{ Auth::id() }}',
 
                 async loadCart() {
                     try {
-                        const res = await fetch('{{ route("pos.cart.get") }}', {
-                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-                        });
-                        const data = await res.json();
-                        this.cart = this.itemsToObject(data.items);
-                        this.cartTotal = Number(data.total);
-                    } catch (e) { console.error(e); }
+                        // Load cart from localStorage first
+                        const savedCart = localStorage.getItem(this.cartStorageKey);
+                        if (savedCart) {
+                            const parsed = JSON.parse(savedCart);
+                            this.cart = parsed.items || {};
+                            this.cartTotal = parsed.total || 0;
+                        }
+                    } catch (e) { 
+                        console.error('Error loading cart from localStorage:', e); 
+                    }
                     this.loadOrders();
                     // Reset all modal states on page load
                     this.showSuccess = false;
@@ -515,6 +536,18 @@
                         this.showSuccess = false;
                         this.showPayment = false;
                     }, 300);
+                },
+
+                saveCartToStorage() {
+                    try {
+                        localStorage.setItem(this.cartStorageKey, JSON.stringify({
+                            items: this.cart,
+                            total: this.cartTotal,
+                            timestamp: Date.now()
+                        }));
+                    } catch (e) {
+                        console.error('Error saving cart to localStorage:', e);
+                    }
                 },
 
                 itemsToObject(items) {
@@ -533,16 +566,8 @@
                 lastAddTime: {},
 
                 async addToCart(productId) {
-                    // Prevent double-click: check if already adding this product
-                    if (this.addingProducts.has(productId)) {
-                        console.log(`Already adding product ${productId}, request blocked`);
-                        return;
-                    }
-
-                    // Add to set of products being added
-                    this.addingProducts.add(productId);
-
                     try {
+                        // Fire request immediately without protection
                         const res = await fetch('{{ route("pos.cart.add") }}', {
                             method: 'POST',
                             headers: {
@@ -555,71 +580,90 @@
                         });
                         const data = await res.json();
                         if (res.ok) {
+                            // Update from server response then save
                             this.cart = this.itemsToObject(data.items);
                             this.cartTotal = Number(data.total);
+                            this.saveCartToStorage();
                         } else {
                             console.error('Failed to add to cart:', data.error);
                         }
                     } catch (e) { 
                         console.error('Error adding to cart:', e); 
-                    } finally {
-                        // Remove from set when request completes
-                        this.addingProducts.delete(productId);
                     }
                 },
 
                 async updateQty(cartId, qty) {
-                    try {
-                        const res = await fetch('{{ route("pos.cart.update") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({ cart_id: cartId, quantity: qty })
-                        });
-                        const data = await res.json();
-                        this.cart = this.itemsToObject(data.items);
-                        this.cartTotal = Number(data.total);
-                    } catch (e) { console.error(e); }
+                    // Validate quantity
+                    if (qty < 0) return;
+                    
+                    // Optimistic update for instant UI response
+                    if (qty === 0) {
+                        delete this.cart[cartId];
+                    } else if (this.cart[cartId]) {
+                        this.cart[cartId].quantity = qty;
+                        this.cart[cartId].subtotal = qty * this.cart[cartId].price;
+                    }
+                    
+                    // Recalculate total instantly
+                    this.cartTotal = Object.values(this.cart).reduce((sum, item) => sum + item.subtotal, 0);
+                    
+                    // Save to localStorage for persistence
+                    this.saveCartToStorage();
+                    
+                    // Sync with server in background (no await, no blocking)
+                    fetch('{{ route("pos.cart.update") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ cart_id: cartId, quantity: qty })
+                    }).catch(e => console.error('Background sync error:', e));
                 },
 
                 async removeItem(cartId) {
-                    try {
-                        const res = await fetch('{{ route("pos.cart.remove") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({ cart_id: cartId })
-                        });
-                        const data = await res.json();
-                        this.cart = this.itemsToObject(data.items);
-                        this.cartTotal = Number(data.total);
-                    } catch (e) { console.error(e); }
+                    // Optimistic delete
+                    delete this.cart[cartId];
+                    
+                    // Recalculate total instantly
+                    this.cartTotal = Object.values(this.cart).reduce((sum, item) => sum + item.subtotal, 0);
+                    
+                    // Save to localStorage
+                    this.saveCartToStorage();
+                    
+                    // Sync with server in background (no blocking)
+                    fetch('{{ route("pos.cart.remove") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ cart_id: cartId })
+                    }).catch(e => console.error('Background sync error:', e));
                 },
 
                 async clearCart() {
                     if (!confirm('Clear all items from cart?')) return;
-                    try {
-                        const res = await fetch('{{ route("pos.cart.clear") }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        const data = await res.json();
-                        this.cart = this.itemsToObject(data.items);
-                        this.cartTotal = Number(data.total);
-                    } catch (e) { console.error(e); }
+                    
+                    // Clear immediately
+                    this.cart = {};
+                    this.cartTotal = 0;
+                    this.saveCartToStorage();
+                    
+                    // Sync with server in background
+                    fetch('{{ route("pos.cart.clear") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).catch(e => console.error('Background sync error:', e));
                 },
 
                 handleKeypad(key) {
@@ -666,6 +710,7 @@
                             this.lastOrder = data.order;
                             this.cart = {};
                             this.cartTotal = 0;
+                            this.saveCartToStorage(); // Clear cart from localStorage
                             this.showPayment = false;
                             this.showSuccess = true;
                             this.paymentType = '';

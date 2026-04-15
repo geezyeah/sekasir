@@ -329,6 +329,15 @@ class AdminController extends Controller
         return redirect()->route('admin.shops')->with('success', 'Shop settings updated successfully.');
     }
 
+    public function previewShopStorefront(Shop $shop)
+    {
+        $products = Product::where('shop_id', $shop->id)
+            ->where('is_active', true)
+            ->get();
+
+        return view('pos.preview', compact('shop', 'products'));
+    }
+
     public function editEmployeeShops(User $user)
     {
         $allShops = Shop::all();

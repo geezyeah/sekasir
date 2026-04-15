@@ -104,9 +104,34 @@
                                     <span class="text-gray-900 font-semibold">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                                 </div>
                                 @if($product->productType?->name)
-                                <div class="flex justify-between text-sm">
+                                <div class="flex justify-between items-center text-sm">
                                     <span class="text-gray-600 font-medium">Type:</span>
-                                    <span class="text-gray-900 font-semibold">{{ $product->productType->name }}</span>
+                                    @php
+                                        $typeIcon = 'fa-ice-cream';
+                                        $typeColor = '#c41e3a';
+                                        $typeName = strtolower($product->productType->name);
+                                        
+                                        if(str_contains($typeName, 'cone')) {
+                                            $typeIcon = 'fa-ice-cream';
+                                            $typeColor = '#c41e3a';
+                                        } elseif(str_contains($typeName, 'cup')) {
+                                            $typeIcon = 'fa-whiskey-glass';
+                                            $typeColor = '#8b5a3c';
+                                        } elseif(str_contains($typeName, 'bowl')) {
+                                            $typeIcon = 'fa-bowl-food';
+                                            $typeColor = '#f39c12';
+                                        } elseif(str_contains($typeName, 'box')) {
+                                            $typeIcon = 'fa-box';
+                                            $typeColor = '#9b59b6';
+                                        } elseif(str_contains($typeName, 'package')) {
+                                            $typeIcon = 'fa-box-open';
+                                            $typeColor = '#e74c3c';
+                                        }
+                                    @endphp
+                                    <span class="text-gray-900 font-semibold flex items-center gap-2">
+                                        <i class="fas {{ $typeIcon }}" style="color: {{ $typeColor }}; font-size: 1.1em;"></i>
+                                        {{ strtoupper($product->productType->name) }}
+                                    </span>
                                 </div>
                                 @endif
                                 @if($product->is_seasonal)
@@ -169,7 +194,38 @@
                                     </td>
                                     <td class="px-4 py-3 text-sm font-semibold text-gray-900">{{ $product->name }}</td>
                                     <td class="px-4 py-3 text-sm font-bold text-indigo-600">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $product->productType?->name ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">
+                                        @if($product->productType?->name)
+                                            @php
+                                                $typeIcon = 'fa-ice-cream';
+                                                $typeColor = '#c41e3a';
+                                                $typeName = strtolower($product->productType->name);
+                                                
+                                                if(str_contains($typeName, 'cone')) {
+                                                    $typeIcon = 'fa-ice-cream';
+                                                    $typeColor = '#c41e3a';
+                                                } elseif(str_contains($typeName, 'cup')) {
+                                                    $typeIcon = 'fa-whiskey-glass';
+                                                    $typeColor = '#8b5a3c';
+                                                } elseif(str_contains($typeName, 'bowl')) {
+                                                    $typeIcon = 'fa-bowl-food';
+                                                    $typeColor = '#f39c12';
+                                                } elseif(str_contains($typeName, 'box')) {
+                                                    $typeIcon = 'fa-box';
+                                                    $typeColor = '#9b59b6';
+                                                } elseif(str_contains($typeName, 'package')) {
+                                                    $typeIcon = 'fa-box-open';
+                                                    $typeColor = '#e74c3c';
+                                                }
+                                            @endphp
+                                            <span class="flex items-center gap-2 font-semibold">
+                                                <i class="fas {{ $typeIcon }}" style="color: {{ $typeColor }};"></i>
+                                                {{ strtoupper($product->productType->name) }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-500">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-3 text-sm">
                                         @if($product->is_seasonal)
                                             <span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold flex items-center gap-1 w-fit">

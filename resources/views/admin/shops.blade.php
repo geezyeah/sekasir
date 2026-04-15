@@ -53,9 +53,14 @@
                                     <i class="fas {{ $shop->name === 'Ice Lepen' ? 'fa-ice-cream' : 'fa-bowl-food' }}" style="color: {{ $shop->name === 'Ice Lepen' ? '#c41e3a' : '#f39c12' }};"></i>
                                     {{ $shop->name }}
                                 </h3>
-                                <a href="{{ route('admin.shops.edit', $shop) }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded hover:bg-indigo-50 transition-colors inline-flex items-center gap-1">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
+                                <div class="flex items-center gap-1">
+                                    <a href="{{ route('admin.shops.preview', $shop) }}" class="text-sm font-semibold text-green-600 hover:text-green-700 px-3 py-1.5 rounded hover:bg-green-50 transition-colors inline-flex items-center gap-1" target="_blank" title="Preview storefront">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="{{ route('admin.shops.edit', $shop) }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded hover:bg-indigo-50 transition-colors inline-flex items-center gap-1">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </div>
                             </div>
 
                             {{-- Logo Preview --}}
