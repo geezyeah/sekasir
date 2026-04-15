@@ -412,6 +412,7 @@
                             </button>
                         </template>
                     </div>
+                </div>
 
                 {{-- Submit --}}
                 <button @click="submitOrder()"
