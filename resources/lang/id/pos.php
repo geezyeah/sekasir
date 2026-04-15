@@ -10,6 +10,7 @@ return [
 
     // POS Main Interface
     'active' => 'Aktif',
+    'active_shift' => 'Shift Aktif',
     'shift_started' => 'Shift Dimulai',
     'shift_duration' => 'Durasi Shift',
     'current_time' => 'Waktu Sekarang',

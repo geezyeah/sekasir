@@ -115,6 +115,153 @@
                 @endif
             </div>
 
+            {{-- Payment Method Breakdown --}}
+            @if($shiftOrders->count() > 0)
+                @php
+                    $qrisOrders = $shiftOrders->where('payment_type', 'QRIS');
+                    $cashOrders = $shiftOrders->where('payment_type', 'CASH');
+                    $qrisTotal = $qrisOrders->sum('total_amount');
+                    $cashTotal = $cashOrders->sum('total_amount');
+                    $qrisCount = $qrisOrders->count();
+                    $cashCount = $cashOrders->count();
+                    $qrisItems = $qrisOrders->sum(function ($order) { return $order->items->sum('quantity'); });
+                    $cashItems = $cashOrders->sum(function ($order) { return $order->items->sum('quantity'); });
+                @endphp
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6">
+                    {{-- QRIS Payment Breakdown --}}
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 bg-blue-500 text-white rounded-lg">
+                                    <i class="fas fa-qrcode text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600 font-semibold">QRIS Payment</p>
+                                    <p class="text-lg sm:text-xl font-bold text-blue-900">Rp {{ number_format($qrisTotal, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 bg-white bg-opacity-50 rounded-lg p-3">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-blue-600">{{ $qrisCount }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Orders</p>
+                            </div>
+                            <div class="text-center border-l border-r border-blue-200">
+                                <p class="text-2xl font-bold text-blue-600">{{ $qrisItems }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Items</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-blue-600">{{ $qrisCount > 0 ? round($qrisTotal / $qrisCount) : 0 }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Avg</p>
+                            </div>
+                        </div>
+                        
+                        @if($qrisCount > 0)
+                            <div class="mt-3 pt-3 border-t border-blue-200 space-y-1">
+                                @foreach($qrisOrders->take(5) as $order)
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-700">{{ $order->formatted_id }}</span>
+                                        <span class="font-semibold text-blue-700">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                                    </div>
+                                @endforeach
+                                @if($qrisCount > 5)
+                                    <p class="text-xs text-gray-500 italic pt-1">+{{ $qrisCount - 5 }} more</p>
+                                @endif
+                            </div>
+                        @else
+                            <div class="mt-3 text-center text-sm text-gray-500">
+                                No QRIS payments
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- CASH Payment Breakdown --}}
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-green-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 bg-green-500 text-white rounded-lg">
+                                    <i class="fas fa-money-bill-wave text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-600 font-semibold">CASH Payment</p>
+                                    <p class="text-lg sm:text-xl font-bold text-green-900">Rp {{ number_format($cashTotal, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2 bg-white bg-opacity-50 rounded-lg p-3">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600">{{ $cashCount }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Orders</p>
+                            </div>
+                            <div class="text-center border-l border-r border-green-200">
+                                <p class="text-2xl font-bold text-green-600">{{ $cashItems }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Items</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-2xl font-bold text-green-600">{{ $cashCount > 0 ? round($cashTotal / $cashCount) : 0 }}</p>
+                                <p class="text-xs text-gray-600 font-medium">Avg</p>
+                            </div>
+                        </div>
+                        
+                        @if($cashCount > 0)
+                            <div class="mt-3 pt-3 border-t border-green-200 space-y-1">
+                                @foreach($cashOrders->take(5) as $order)
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-gray-700">{{ $order->formatted_id }}</span>
+                                        <span class="font-semibold text-green-700">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                                    </div>
+                                @endforeach
+                                @if($cashCount > 5)
+                                    <p class="text-xs text-gray-500 italic pt-1">+{{ $cashCount - 5 }} more</p>
+                                @endif
+                            </div>
+                        @else
+                            <div class="mt-3 text-center text-sm text-gray-500">
+                                No CASH payments
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Payment Method Statistics --}}
+                <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-3 sm:mb-6">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-4">Payment Method Summary</h3>
+                    
+                    <div class="space-y-3">
+                        {{-- QRIS Bar --}}
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-qrcode text-blue-500 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-700">QRIS</span>
+                                </div>
+                                <span class="text-sm font-bold text-gray-900">{{ $shiftTotalAmount > 0 ? round(($qrisTotal / $shiftTotalAmount) * 100) : 0 }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $shiftTotalAmount > 0 ? ($qrisTotal / $shiftTotalAmount) * 100 : 0 }}%"></div>
+                            </div>
+                        </div>
+
+                        {{-- CASH Bar --}}
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-money-bill-wave text-green-500 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-700">CASH</span>
+                                </div>
+                                <span class="text-sm font-bold text-gray-900">{{ $shiftTotalAmount > 0 ? round(($cashTotal / $shiftTotalAmount) * 100) : 0 }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: {{ $shiftTotalAmount > 0 ? ($cashTotal / $shiftTotalAmount) * 100 : 0 }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Order Details Breakdown --}}
             @if($shiftOrders->count() > 0)
                 <div class="bg-white rounded-lg shadow-sm p-3 sm:p-5">

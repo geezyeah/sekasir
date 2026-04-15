@@ -10,6 +10,7 @@ return [
 
     // POS Main Interface
     'active' => 'Active',
+    'active_shift' => 'Active Shift',
     'shift_started' => 'Shift Started',
     'shift_duration' => 'Shift Duration',
     'current_time' => 'Current Time',
