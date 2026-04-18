@@ -31,14 +31,14 @@ class OrderController extends Controller
 
         // Fallback to database cart if session cart is empty
         if (empty($cartItems)) {
-            $databaseCart = Cart::where('user_id', $user->id)->get();
+            $databaseCart = Cart::with('product.productType')->where('user_id', $user->id)->get();
             if ($databaseCart->isNotEmpty()) {
                 $cartItems = $databaseCart->map(function ($item) {
                     return [
                         'id' => 'cart_' . $item->id,
                         'product_id' => $item->product_id,
                         'product_name' => $item->product->name ?? 'Product',
-                        'product_type' => $item->product->type ?? null,
+                        'product_type' => strtoupper($item->product->productType?->name ?? 'UNKNOWN'),
                         'quantity' => $item->quantity,
                         'price' => $item->product->price ?? 0,
                         'subtotal' => $item->subtotal,

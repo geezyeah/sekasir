@@ -20,7 +20,8 @@ class PosController extends Controller
         }
 
         $shop = $shift->shop;
-        $products = Product::where('shop_id', $shop->id)
+        $products = Product::with('productType')
+            ->where('shop_id', $shop->id)
             ->where('is_active', true)
             ->get();
 
@@ -37,9 +38,10 @@ class PosController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::with('productType')->findOrFail($request->product_id);
         $user = Auth::user();
         $cart = $this->getSessionCart();
+        $productTypeName = strtoupper($product->productType?->name ?? 'UNKNOWN');
 
         $productIndex = array_search($product->id, array_column($cart, 'product_id'));
 
@@ -59,7 +61,7 @@ class PosController extends Controller
                 'id' => uniqid('cart_'),
                 'product_id' => $product->id,
                 'product_name' => $product->name,
-                'product_type' => $product->type,
+                'product_type' => $productTypeName,
                 'quantity' => $request->quantity,
                 'price' => $product->price,
                 'subtotal' => $request->quantity * $product->price,
@@ -206,7 +208,7 @@ class PosController extends Controller
         }
 
         $shop = $shift->shop;
-        $shiftOrders = $shift->orders()->with('items.product')->orderBy('created_at', 'desc')->limit(50)->get();
+        $shiftOrders = $shift->orders()->with('items.product.productType')->orderBy('created_at', 'desc')->limit(50)->get();
         $shiftTotalAmount = $shiftOrders->sum('total_amount');
         $totalItems = $shiftOrders->sum(function ($order) {
             return $order->items->sum('quantity');
@@ -227,7 +229,8 @@ class PosController extends Controller
         foreach ($filteredOrders as $order) {
             foreach ($order->items as $item) {
                 $productName = $item->product?->name ?? '[Product Removed]';
-                $productType = $item->product?->type ?? 'UNKNOWN';
+                // Get product type from ProductType relationship
+                $productType = strtoupper($item->product?->productType?->name ?? 'UNKNOWN');
                 $key = "{$productName} - {$productType}";
 
                 if ($productDetails->has($key)) {

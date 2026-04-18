@@ -110,9 +110,13 @@
                                 <p class="text-xs text-purple-600 font-semibold mb-1">Working for</p>
                                 <p class="text-sm font-bold text-gray-900">
                                     @php
-                                        $duration = now()->diffInMinutes($shift->login_time);
-                                        $hours = intdiv($duration, 60);
-                                        $minutes = $duration % 60;
+                                        if ($shift->logout_time) {
+                                            $duration = $shift->logout_time->diffInMinutes($shift->login_time);
+                                        } else {
+                                            $duration = now()->diffInMinutes($shift->login_time);
+                                        }
+                                        $hours = intdiv(abs($duration), 60);
+                                        $minutes = abs($duration) % 60;
                                         echo $hours . 'h ' . $minutes . 'm';
                                     @endphp
                                 </p>
@@ -212,6 +216,9 @@
                                     <i class="fas fa-store mr-2 text-indigo-600"></i>Shop
                                 </th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                                    <i class="fas fa-calendar mr-2 text-indigo-600"></i>Date
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
                                     <i class="fas fa-sign-in-alt mr-2 text-indigo-600"></i>Login
                                 </th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
@@ -236,6 +243,11 @@
                                         <span class="px-3 py-1.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-bold">
                                             <i class="fas {{ $shift->shop->name === 'Ice Lepen' ? 'fa-ice-cream' : 'fa-bowl-food' }} mr-1"></i>
                                             {{ $shift->shop->name }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-bold rounded-lg">
+                                            <i class="fas fa-calendar mr-1"></i>{{ $shift->login_time?->format('d M Y') ?? '-' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
@@ -272,7 +284,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                    <td colspan="8" class="px-6 py-8 text-center text-gray-500">
                                         <i class="fas fa-clock text-3xl mb-2 block opacity-30"></i>
                                         <span class="text-sm">No shifts found</span>
                                     </td>
