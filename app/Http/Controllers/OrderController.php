@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
@@ -27,6 +28,26 @@ class OrderController extends Controller
         }
 
         $cartItems = session('pos.cart', []);
+
+        // Fallback to database cart if session cart is empty
+        if (empty($cartItems)) {
+            $databaseCart = Cart::where('user_id', $user->id)->get();
+            if ($databaseCart->isNotEmpty()) {
+                $cartItems = $databaseCart->map(function ($item) {
+                    return [
+                        'id' => 'cart_' . $item->id,
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product->name ?? 'Product',
+                        'product_type' => $item->product->type ?? null,
+                        'quantity' => $item->quantity,
+                        'price' => $item->product->price ?? 0,
+                        'subtotal' => $item->subtotal,
+                    ];
+                })->toArray();
+                // Restore session cart from database
+                session(['pos.cart' => $cartItems]);
+            }
+        }
 
         if (empty($cartItems)) {
             return response()->json(['error' => 'Cart is empty'], 422);
@@ -93,8 +114,9 @@ class OrderController extends Controller
                 ]);
             }
 
-            // Clear cart from session
+            // Clear cart from session and database
             session(['pos.cart' => []]);
+            Cart::where('user_id', $user->id)->delete();
 
             return $order;
         });

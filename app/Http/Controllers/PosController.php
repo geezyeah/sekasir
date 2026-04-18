@@ -38,6 +38,7 @@ class PosController extends Controller
         ]);
 
         $product = Product::findOrFail($request->product_id);
+        $user = Auth::user();
         $cart = $this->getSessionCart();
 
         $productIndex = array_search($product->id, array_column($cart, 'product_id'));
@@ -45,6 +46,14 @@ class PosController extends Controller
         if ($productIndex !== false) {
             $cart[$productIndex]['quantity'] += $request->quantity;
             $cart[$productIndex]['subtotal'] = $cart[$productIndex]['quantity'] * $product->price;
+            
+            // Update database cart
+            Cart::where('user_id', $user->id)
+                ->where('product_id', $product->id)
+                ->update([
+                    'quantity' => $cart[$productIndex]['quantity'],
+                    'subtotal' => $cart[$productIndex]['subtotal'],
+                ]);
         } else {
             $cart[] = [
                 'id' => uniqid('cart_'),
@@ -55,6 +64,14 @@ class PosController extends Controller
                 'price' => $product->price,
                 'subtotal' => $request->quantity * $product->price,
             ];
+            
+            // Add to database cart
+            Cart::create([
+                'user_id' => $user->id,
+                'product_id' => $product->id,
+                'quantity' => $request->quantity,
+                'subtotal' => $request->quantity * $product->price,
+            ]);
         }
 
         session(['pos.cart' => $cart]);
@@ -73,6 +90,7 @@ class PosController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
+        $user = Auth::user();
         $cart = $this->getSessionCart();
         $cartIndex = array_search($request->cart_id, array_column($cart, 'id'));
 
@@ -81,11 +99,25 @@ class PosController extends Controller
         }
 
         if ($request->quantity == 0) {
+            $productId = $cart[$cartIndex]['product_id'];
             unset($cart[$cartIndex]);
             $cart = array_values($cart);
+            
+            // Remove from database cart
+            Cart::where('user_id', $user->id)
+                ->where('product_id', $productId)
+                ->delete();
         } else {
             $cart[$cartIndex]['quantity'] = $request->quantity;
             $cart[$cartIndex]['subtotal'] = $request->quantity * $cart[$cartIndex]['price'];
+            
+            // Update database cart
+            Cart::where('user_id', $user->id)
+                ->where('product_id', $cart[$cartIndex]['product_id'])
+                ->update([
+                    'quantity' => $request->quantity,
+                    'subtotal' => $cart[$cartIndex]['subtotal'],
+                ]);
         }
 
         session(['pos.cart' => $cart]);
@@ -103,12 +135,19 @@ class PosController extends Controller
             'cart_id' => 'required|string',
         ]);
 
+        $user = Auth::user();
         $cart = $this->getSessionCart();
         $cartIndex = array_search($request->cart_id, array_column($cart, 'id'));
 
         if ($cartIndex !== false) {
+            $productId = $cart[$cartIndex]['product_id'];
             unset($cart[$cartIndex]);
             $cart = array_values($cart);
+            
+            // Remove from database cart
+            Cart::where('user_id', $user->id)
+                ->where('product_id', $productId)
+                ->delete();
         }
 
         session(['pos.cart' => $cart]);
@@ -122,7 +161,11 @@ class PosController extends Controller
 
     public function clearCart()
     {
+        $user = Auth::user();
         session(['pos.cart' => []]);
+        
+        // Clear database cart
+        Cart::where('user_id', $user->id)->delete();
 
         if (request()->ajax()) {
             return $this->cartData();
@@ -169,6 +212,42 @@ class PosController extends Controller
             return $order->items->sum('quantity');
         });
 
-        return view('pos.shift-report', compact('shift', 'shop', 'shiftOrders', 'shiftTotalAmount', 'totalItems'));
+        // Organize product details by payment type
+        $qrisProductDetails = $this->getProductDetailsByPayment($shiftOrders, 'QRIS');
+        $cashProductDetails = $this->getProductDetailsByPayment($shiftOrders, 'CASH');
+
+        return view('pos.shift-report', compact('shift', 'shop', 'shiftOrders', 'shiftTotalAmount', 'totalItems', 'qrisProductDetails', 'cashProductDetails'));
+    }
+
+    private function getProductDetailsByPayment($orders, $paymentType)
+    {
+        $filteredOrders = $orders->where('payment_type', $paymentType);
+        $productDetails = collect();
+
+        foreach ($filteredOrders as $order) {
+            foreach ($order->items as $item) {
+                $productName = $item->product?->name ?? '[Product Removed]';
+                $productType = $item->product?->type ?? 'UNKNOWN';
+                $key = "{$productName} - {$productType}";
+
+                if ($productDetails->has($key)) {
+                    $productDetails[$key] = [
+                        'product_name' => $productName,
+                        'product_type' => $productType,
+                        'quantity' => $productDetails[$key]['quantity'] + $item->quantity,
+                        'total' => $productDetails[$key]['total'] + ($item->price * $item->quantity),
+                    ];
+                } else {
+                    $productDetails[$key] = [
+                        'product_name' => $productName,
+                        'product_type' => $productType,
+                        'quantity' => $item->quantity,
+                        'total' => $item->price * $item->quantity,
+                    ];
+                }
+            }
+        }
+
+        return $productDetails->sortByDesc('quantity');
     }
 }

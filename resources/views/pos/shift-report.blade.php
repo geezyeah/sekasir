@@ -262,44 +262,227 @@
                 </div>
             @endif
 
-            {{-- Order Details Breakdown --}}
+            {{-- Order Details Breakdown by Payment Method --}}
             @if($shiftOrders->count() > 0)
-                <div class="bg-white rounded-lg shadow-sm p-3 sm:p-5">
-                    <h3 class="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">{{ __('pos.products_summary') }}</h3>
-                    
-                    @php
-                        $productSummary = collect();
-                        foreach ($shiftOrders as $order) {
-                            foreach ($order->items as $item) {
-                                $key = $item->product?->name ?? '[Product Removed]';
-                                if ($productSummary->has($key)) {
-                                    $productSummary[$key] = [
-                                        'quantity' => $productSummary[$key]['quantity'] + $item->quantity,
-                                        'total' => $productSummary[$key]['total'] + ($item->price * $item->quantity),
-                                    ];
-                                } else {
-                                    $productSummary[$key] = [
-                                        'quantity' => $item->quantity,
-                                        'total' => $item->price * $item->quantity,
-                                    ];
-                                }
-                            }
-                        }
-                    @endphp
-
-                    <div class="space-y-1">
-                        @foreach($productSummary as $productName => $details)
-                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded border border-gray-200">
-                                <div>
-                                    <p class="font-semibold text-sm text-gray-900">{{ $productName }}</p>
-                                    <p class="text-xs text-gray-500">Qty: {{ $details['quantity'] }}</p>
+                <div class="space-y-4 sm:space-y-6">
+                    {{-- QRIS Product Details --}}
+                    @if($qrisProductDetails->count() > 0)
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div class="flex items-center gap-3 flex-1">
+                                    <div class="p-2 bg-blue-500 text-white rounded-lg">
+                                        <i class="fas fa-qrcode text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm sm:text-base font-bold text-gray-900">QRIS - Products Sold</h3>
+                                        <p class="text-xs text-gray-600">{{ $qrisProductDetails->sum('quantity') }} items total</p>
+                                    </div>
                                 </div>
-                                <p class="font-bold text-sm text-green-700">Rp {{ number_format($details['total'], 0, ',', '.') }}</p>
+                                <button onclick="copyQRISReport()" class="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap">
+                                    <i class="fas fa-copy"></i>
+                                    <span>Copy Report</span>
+                                </button>
                             </div>
-                        @endforeach
-                    </div>
+
+                            {{-- Hidden QRIS Report Data --}}
+                            <div id="qris-report-data" style="display: none;">
+@php
+$qrisTotal = $qrisProductDetails->sum('total');
+$qrisItems = $qrisProductDetails->sum('quantity');
+$reportText = "QRIS - PRODUCTS SOLD\n";
+$reportText .= "Total Rp: " . number_format($qrisTotal, 0, ',', '.') . "\n";
+$reportText .= "Total Items: " . $qrisItems . "\n";
+$reportText .= str_repeat("=", 50) . "\n\n";
+$reportText .= "Product Sold Details:\n";
+$qrisCounter = 1;
+foreach($qrisProductDetails as $product):
+    $reportText .= $qrisCounter . ". " . $product['product_name'] . " - " . $product['product_type'] . " = " . $product['quantity'] . " items (Rp " . number_format($product['total'], 0, ',', '.') . ")\n";
+    $qrisCounter++;
+endforeach;
+@endphp
+{{ $reportText }}
+                            </div>
+
+                            <div class="space-y-2">
+                                @foreach($qrisProductDetails as $product)
+                                    <div class="bg-white bg-opacity-80 rounded-lg p-3 hover:shadow-md transition-shadow">
+                                        <div class="flex items-start justify-between mb-2">
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-sm text-gray-900">
+                                                    <span class="text-blue-600 font-bold mr-2">{{ $loop->iteration }}.</span>{{ $product['product_name'] }}
+                                                </p>
+                                                <p class="text-xs text-blue-700 font-medium">{{ $product['product_type'] }}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-sm font-bold text-blue-600">{{ $product['quantity'] }} items</p>
+                                                <p class="text-xs text-gray-500">Rp {{ number_format($product['total'], 0, ',', '.') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-blue-100 rounded-full h-1.5">
+                                            <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ ($product['quantity'] / $qrisProductDetails->sum('quantity')) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- CASH Product Details --}}
+                    @if($cashProductDetails->count() > 0)
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-green-500">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div class="flex items-center gap-3 flex-1">
+                                    <div class="p-2 bg-green-500 text-white rounded-lg">
+                                        <i class="fas fa-money-bill-wave text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm sm:text-base font-bold text-gray-900">CASH - Products Sold</h3>
+                                        <p class="text-xs text-gray-600">{{ $cashProductDetails->sum('quantity') }} items total</p>
+                                    </div>
+                                </div>
+                                <button onclick="copyCASHReport()" class="flex items-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap">
+                                    <i class="fas fa-copy"></i>
+                                    <span>Copy Report</span>
+                                </button>
+                            </div>
+
+                            {{-- Hidden CASH Report Data --}}
+                            <div id="cash-report-data" style="display: none;">
+@php
+$cashTotal = $cashProductDetails->sum('total');
+$cashItems = $cashProductDetails->sum('quantity');
+$reportText = "CASH - PRODUCTS SOLD\n";
+$reportText .= "Total Rp: " . number_format($cashTotal, 0, ',', '.') . "\n";
+$reportText .= "Total Items: " . $cashItems . "\n";
+$reportText .= str_repeat("=", 50) . "\n\n";
+$reportText .= "Product Sold Details:\n";
+$cashCounter = 1;
+foreach($cashProductDetails as $product):
+    $reportText .= $cashCounter . ". " . $product['product_name'] . " - " . $product['product_type'] . " = " . $product['quantity'] . " items (Rp " . number_format($product['total'], 0, ',', '.') . ")\n";
+    $cashCounter++;
+endforeach;
+@endphp
+{{ $reportText }}
+                            </div>
+
+                            <div class="space-y-2">
+                                @foreach($cashProductDetails as $product)
+                                    <div class="bg-white bg-opacity-80 rounded-lg p-3 hover:shadow-md transition-shadow">
+                                        <div class="flex items-start justify-between mb-2">
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-sm text-gray-900">
+                                                    <span class="text-green-600 font-bold mr-2">{{ $loop->iteration }}.</span>{{ $product['product_name'] }}
+                                                </p>
+                                                <p class="text-xs text-green-700 font-medium">{{ $product['product_type'] }}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-sm font-bold text-green-600">{{ $product['quantity'] }} items</p>
+                                                <p class="text-xs text-gray-500">Rp {{ number_format($product['total'], 0, ',', '.') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="w-full bg-green-100 rounded-full h-1.5">
+                                            <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ ($product['quantity'] / $cashProductDetails->sum('quantity')) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
     </div>
+
+    <script>
+        function copyQRISReport() {
+            const reportData = document.getElementById('qris-report-data').textContent.trim();
+            copyToClipboard(reportData, 'QRIS Report');
+        }
+
+        function copyCASHReport() {
+            const reportData = document.getElementById('cash-report-data').textContent.trim();
+            copyToClipboard(reportData, 'CASH Report');
+        }
+
+        function copyToClipboard(text, reportType) {
+            if (!text) {
+                alert('No data to copy');
+                return;
+            }
+
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            // Select and copy the text
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                
+                // Show success feedback
+                showCopyNotification(reportType);
+            } catch (err) {
+                alert('Failed to copy report');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function showCopyNotification(reportType) {
+            // Create and show a temporary notification
+            const notification = document.createElement('div');
+            notification.textContent = reportType + ' copied to clipboard!';
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // CSS animations for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </x-app-layout>
