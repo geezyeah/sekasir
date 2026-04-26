@@ -208,7 +208,7 @@ class PosController extends Controller
         }
 
         $shop = $shift->shop;
-        $shiftOrders = $shift->orders()->with('items.product.productType')->orderBy('created_at', 'desc')->limit(50)->get();
+        $shiftOrders = $shift->orders()->with('items.product.productType')->orderBy('created_at', 'desc')->get();
         $shiftTotalAmount = $shiftOrders->sum('total_amount');
         $totalItems = $shiftOrders->sum(function ($order) {
             return $order->items->sum('quantity');
